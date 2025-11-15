@@ -20,8 +20,7 @@ export const searchAzure = async (query) => {
       },
       body: JSON.stringify({
         search: query,
-        count: true,
-        top: 10,
+        count: true
       }),
     });
 
