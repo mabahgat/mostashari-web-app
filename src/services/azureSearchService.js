@@ -1,9 +1,14 @@
 const AZURE_CONFIG = {
-  index: "***REMOVED***",
-  queryKey: "***REMOVED***",
-  service: "***REMOVED***",
+  index: process.env.REACT_APP_AZURE_SEARCH_INDEX,
+  queryKey: process.env.REACT_APP_AZURE_SEARCH_KEY,
+  service: process.env.REACT_APP_AZURE_SEARCH_SERVICE,
   dnsSuffix: "search.windows.net",
 };
+
+// Validate that required environment variables are set
+if (!AZURE_CONFIG.service || !AZURE_CONFIG.index || !AZURE_CONFIG.queryKey) {
+  console.error("❌ Missing required Azure Search configuration. Check your .env.local file.");
+}
 
 const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
 const CACHE_KEY_PREFIX = "search_cache_";
@@ -89,7 +94,6 @@ export const searchAzure = async (query) => {
     const searchUrl = `https://${AZURE_CONFIG.service}.${AZURE_CONFIG.dnsSuffix}/indexes/${AZURE_CONFIG.index}/docs/search?api-version=2021-04-30-Preview`;
 
     console.log("🔍 Search Query:", query);
-    console.log("🌐 Search URL:", searchUrl);
 
     const response = await fetch(searchUrl, {
       method: "POST",
