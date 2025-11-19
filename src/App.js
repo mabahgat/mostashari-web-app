@@ -70,10 +70,11 @@ function App() {
   };
 
   const getResultContent = (result) => {
-    // Extract from Articles and Content fields
+    // The parser already normalizes the data
     return {
-      title: result.Articles || 'Result',
-      description: result.content || '',
+      title: result.title || "Result",
+      description: result.description || "",
+      subtitle: result.subtitle || "",
     };
   };
 
@@ -170,6 +171,11 @@ function App() {
                       return (
                         <div key={startIndex + index} className="result-item">
                           <h4>{content.title}</h4>
+                          {content.subtitle && (
+                            <p style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>
+                              {content.subtitle}
+                            </p>
+                          )}
                           <p>{content.description}</p>
                         </div>
                       );

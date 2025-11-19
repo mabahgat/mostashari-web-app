@@ -83,6 +83,23 @@ const clearExpiredCache = () => {
   }
 };
 
+// Parse API response into standardized format
+const parseSearchResults = (data) => {
+  if (!data || !data.value) {
+    return [];
+  }
+
+  return data.value.map((item) => ({
+    title: item.header_1 || item.header_2 || item.title || "Result",
+    description: item.chunk || "",
+    subtitle: item.header_2 || "",
+    source: item.title || "",
+    highlights: item["@search.highlights"],
+    score: item["@search.score"],
+    captions: item["@search.captions"],
+  }));
+};
+
 export const searchAzure = async (query) => {
   try {
     // Check cache first
@@ -103,7 +120,15 @@ export const searchAzure = async (query) => {
       },
       body: JSON.stringify({
         search: query,
-        count: true
+        count: true,
+        queryType: "semantic",
+        semanticConfiguration: "rag-md-2-semantic-configuration-2",
+        captions: "extractive",
+        queryLanguage: "ar-SA",
+        searchFields: "header_1,chunk",
+        select: "chunk_id,parent_id,chunk,title,header_1,header_2",
+        highlightPreTag: "<b><u>",
+        highlightPostTag: "</u></b>",
       }),
     });
 
@@ -113,11 +138,12 @@ export const searchAzure = async (query) => {
     }
 
     const data = await response.json();
-    console.log("✅ Full Response Data:", data);
-    console.log("📊 Total Results Count:", data.value.length);
-    console.log("📊 Articles Array Length:", data.value[0]?.articles?.length || 0);
+    console.log("✅ Search Response received");
+    console.log("📊 Total Results Count:", data["@odata.count"] || 0);
+    console.log("📋 Documents in response:", data.value?.length || 0);
     
-    const results = data.value[0]?.articles || [];
+    // Parse and normalize results
+    const results = parseSearchResults(data);
     
     // Cache the results
     setCachedResults(query, results);
