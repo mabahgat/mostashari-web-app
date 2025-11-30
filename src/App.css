@@ -342,7 +342,13 @@
   font-size: 16px;
 }
 
-/* ===== TABLET RESPONSIVENESS ===== */
+/* ===== NARROW DESKTOP & TABLET RESPONSIVENESS ===== */
+@media (max-width: 1000px) {
+  .top-search-container {
+    padding-right: 100px;
+  }
+}
+
 @media (max-width: 768px) {
   .language-toggle {
     top: 16px;
@@ -371,6 +377,7 @@
 
   .top-search-container {
     padding: 12px 16px;
+    padding-right: 110px;
   }
 
   .search-form-top {
@@ -443,7 +450,7 @@
 
   .top-search-container {
     padding: 10px 12px;
-    padding-right: 70px;
+    padding-right: 110px;
     width: 100vw;
     left: 0;
     right: 0;
@@ -512,6 +519,25 @@
 
   .result-item p {
     font-size: 13px;
+  }
+}
+
+/* ===== VERY SMALL SCREENS (Below half screen) ===== */
+@media (max-width: 360px) {
+  .language-toggle {
+    padding: 8px 10px;
+    font-size: 10px;
+    top: 12px;
+    right: 10px;
+    min-width: 38px;
+  }
+
+  .top-search-container {
+    padding-right: 130px;
+  }
+
+  .search-input-top {
+    min-width: 50px;
   }
 }
 
