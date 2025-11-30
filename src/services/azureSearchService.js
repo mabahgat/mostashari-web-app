@@ -2,7 +2,8 @@ const AZURE_CONFIG = {
   index: process.env.REACT_APP_AZURE_SEARCH_INDEX,
   queryKey: process.env.REACT_APP_AZURE_SEARCH_KEY,
   service: process.env.REACT_APP_AZURE_SEARCH_SERVICE,
-  dnsSuffix: "search.windows.net",
+  dnsSuffix: process.env.REACT_APP_AZURE_DNS_SUFFIX || "search.windows.net",
+  semanticConfiguration: process.env.REACT_APP_AZURE_SEMANTIC_CONFIG || "rag-md-2-semantic-configuration-2",
 };
 
 // Validate that required environment variables are set
@@ -154,7 +155,7 @@ export const searchAzure = async (query) => {
         search: query,
         count: true,
         queryType: "semantic",
-        semanticConfiguration: "rag-md-2-semantic-configuration-2",
+        semanticConfiguration: AZURE_CONFIG.semanticConfiguration,
         captions: "extractive",
         queryLanguage: "ar-SA",
         searchFields: "header_1,chunk",
