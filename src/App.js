@@ -3,6 +3,9 @@ import './App.css';
 import translations from './i18n';
 import { searchAzure } from './services/azureSearchService';
 
+const PRE_TAG = "<em>";
+const POST_TAG = "</em>";
+
 function App() {
   const [input, setInput] = useState('');
   const [language, setLanguage] = useState('ar'); // Arabic as default
@@ -67,6 +70,23 @@ function App() {
     setCurrentPage(pageNumber);
     // Scroll to top of results
     window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
+
+  // Safely parse and render highlighted text
+  const renderHighlightedText = (text) => {
+    const parts = text.split(new RegExp(`(${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}.*?${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "g"));
+    
+    return parts.map((part, index) => {
+      if (part.startsWith(PRE_TAG) && part.endsWith(POST_TAG)) {
+        const highlightedText = part.slice(PRE_TAG.length, -POST_TAG.length);
+        return (
+          <span key={index} style={{ backgroundColor: "#FFFF00", fontWeight: "bold" }}>
+            {highlightedText}
+          </span>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
   };
 
   const getResultContent = (result) => {
@@ -176,7 +196,7 @@ function App() {
                               {content.subtitle}
                             </p>
                           )}
-                          <p>{content.description}</p>
+                          <p>{renderHighlightedText(content.description)}</p>
                         </div>
                       );
                     })}

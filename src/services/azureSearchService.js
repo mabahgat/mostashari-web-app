@@ -12,6 +12,8 @@ if (!AZURE_CONFIG.service || !AZURE_CONFIG.index || !AZURE_CONFIG.queryKey) {
 
 const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
 const CACHE_KEY_PREFIX = "search_cache_";
+const PRE_TAG = "<em>";
+const POST_TAG = "</em>";
 
 // Get cached results
 const getCachedResults = (query) => {
@@ -89,15 +91,45 @@ const parseSearchResults = (data) => {
     return [];
   }
 
-  return data.value.map((item) => ({
-    title: item.header_1 || item.header_2 || item.title || "Result",
-    description: item.chunk || "",
-    subtitle: item.header_2 || "",
-    source: item.title || "",
-    highlights: item["@search.highlights"],
-    score: item["@search.score"],
-    captions: item["@search.captions"],
-  }));
+  return data.value.map((item) => {
+    // Extract highlights text from captions if available
+    let highlightText = "";
+    let chunkWithHighlights = item.chunk || "";
+    
+    if (item["@search.captions"] && item["@search.captions"].length > 0) {
+      highlightText = item["@search.captions"][0].highlights || item["@search.captions"][0].text || "";
+      
+      // If we have highlights, extract the highlighted terms and apply them to chunk
+      if (highlightText && item.chunk) {
+        // Find all text between PRE_TAG and POST_TAG in highlights
+        const regex = new RegExp(`${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^<]+?)${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "g");
+        let match;
+        const highlightedTerms = new Set();
+        
+        while ((match = regex.exec(highlightText)) !== null) {
+          highlightedTerms.add(match[1]);
+        }
+        
+        // Apply highlights to chunk for each highlighted term
+        highlightedTerms.forEach((term) => {
+          // Escape special regex characters and replace exact matches (including surrounding spaces/punctuation)
+          const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const termRegex = new RegExp(escapedTerm, "g");
+          chunkWithHighlights = chunkWithHighlights.replace(termRegex, `${PRE_TAG}${term}${POST_TAG}`);
+        });
+      }
+    }
+
+    return {
+      title: item.header_1 || item.header_2 || item.title || "Result",
+      description: chunkWithHighlights,
+      subtitle: item.header_2 || "",
+      source: item.title || "",
+      highlights: highlightText,
+      score: item["@search.score"],
+      rerankerScore: item["@search.rerankerScore"],
+    };
+  });
 };
 
 export const searchAzure = async (query) => {
@@ -127,8 +159,8 @@ export const searchAzure = async (query) => {
         queryLanguage: "ar-SA",
         searchFields: "header_1,chunk",
         select: "chunk_id,parent_id,chunk,title,header_1,header_2",
-        highlightPreTag: "<b><u>",
-        highlightPostTag: "</u></b>",
+        highlightPreTag: PRE_TAG,
+        highlightPostTag: POST_TAG,
       }),
     });
 
