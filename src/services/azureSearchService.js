@@ -93,46 +93,14 @@ const parseSearchResults = (data) => {
   }
 
   return data.value.map((item) => {
-    // Extract highlights text from captions if available
-    let highlightText = "";
-    let chunkWithHighlights = item.chunk || "";
-    
-    if (item["@search.captions"] && item["@search.captions"].length > 0) {
-      highlightText = item["@search.captions"][0].highlights || item["@search.captions"][0].text || "";
-      
-      // If we have highlights, extract the highlighted terms and apply them to chunk
-      if (highlightText && item.chunk) {
-        // Find all text between PRE_TAG and POST_TAG in highlights
-        // Use [\s\S]*? to match any character including newlines
-        const regex = new RegExp(`${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([\\s\\S]*?)${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "g");
-        let match;
-        const highlightedTerms = new Set();
-        
-        while ((match = regex.exec(highlightText)) !== null) {
-          // Normalize whitespace in the term (tabs and multiple spaces to single space)
-          const normalizedTerm = match[1].replace(/\s+/g, ' ');
-          highlightedTerms.add(normalizedTerm);
-        }
-        
-        // Apply highlights to chunk for each highlighted term
-        highlightedTerms.forEach((term) => {
-          // Escape special regex characters
-          const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          // Create a flexible regex that matches the term with any whitespace variations
-          const flexibleTerm = escapedTerm.replace(/\s+/g, '\\s+');
-          const termRegex = new RegExp(flexibleTerm, "g");
-          chunkWithHighlights = chunkWithHighlights.replace(termRegex, (match) => `${PRE_TAG}${match}${POST_TAG}`);
-        });
-      }
-    }
 
     return {
       title: item.header_1 || item.header_2 || item.title || "Result",
-      description: chunkWithHighlights,
+      description: item.chunk || "",
       subtitle: item.header_2 || "",
       subtitle2: item.header_3 || "",
       source: item.title || "",
-      highlights: highlightText,
+      highlights: item["@search.captions"][0].highlights || item["@search.captions"][0].text || "",
       score: item["@search.score"],
       rerankerScore: item["@search.rerankerScore"],
     };

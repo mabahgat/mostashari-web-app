@@ -69,23 +69,6 @@ function App() {
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
 
-  // Safely parse and render highlighted text
-  const renderHighlightedText = (text) => {
-    const parts = text.split(new RegExp(`(${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[\\s\\S]*?${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "g"));
-    
-    return parts.map((part, index) => {
-      if (part.startsWith(PRE_TAG) && part.endsWith(POST_TAG)) {
-        const highlightedText = part.slice(PRE_TAG.length, -POST_TAG.length);
-        return (
-          <span key={index} style={{ backgroundColor: "#FFFF00", fontWeight: "bold" }}>
-            {highlightedText}
-          </span>
-        );
-      }
-      return <span key={index}>{part}</span>;
-    });
-  };
-
   const getResultContent = (result) => {
     return {
       title: result.title || "Result",
@@ -208,7 +191,7 @@ function App() {
                               {content.subtitle2}
                             </p>
                           )}
-                          <p>{renderHighlightedText(content.description)}</p>
+                          <p>{content.description}</p>
                           
                           {/* Search Hit Details */}
                           <details style={{ marginTop: "12px", fontSize: "11px", color: "#999", borderTop: "1px solid #eee", paddingTop: "8px" }}>
@@ -216,7 +199,21 @@ function App() {
                               {t.searchHit}
                             </summary>
                             <pre style={{ backgroundColor: "#f5f5f5", padding: "8px", borderRadius: "4px", overflow: "auto", maxHeight: "200px", fontSize: "10px", whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-                              {JSON.stringify(result.highlights, null, 2).replace(new RegExp(PRE_TAG, "g"), "<<<").replace(new RegExp(POST_TAG, "g"), ">>>")}
+                              {(() => {
+                                const jsonStr = JSON.stringify(result.highlights, null, 2);
+                                const preTagRegex = new RegExp(PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
+                                const postTagRegex = new RegExp(POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
+                                
+                                return jsonStr
+                                  .split(new RegExp(`(${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[\\s\\S]*?${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "g"))
+                                  .map((part, idx) => {
+                                    if (part.includes(PRE_TAG) && part.includes(POST_TAG)) {
+                                      const content = part.replace(preTagRegex, "").replace(postTagRegex, "");
+                                      return <span key={idx} style={{ backgroundColor: "#FFFF00", fontWeight: "bold" }}>{content}</span>;
+                                    }
+                                    return <span key={idx}>{part}</span>;
+                                  });
+                              })()}
                             </pre>
                           </details>
                         </div>
