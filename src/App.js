@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import translations from './i18n';
-import { searchAzure } from './services/azureSearchService';
-
-const PRE_TAG = "<em>";
-const POST_TAG = "</em>";
+import { searchAzure, PRE_TAG, POST_TAG } from './services/azureSearchService';
 
 function App() {
   const [input, setInput] = useState('');
@@ -74,7 +71,7 @@ function App() {
 
   // Safely parse and render highlighted text
   const renderHighlightedText = (text) => {
-    const parts = text.split(new RegExp(`(${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}.*?${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "g"));
+    const parts = text.split(new RegExp(`(${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[\\s\\S]*?${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "g"));
     
     return parts.map((part, index) => {
       if (part.startsWith(PRE_TAG) && part.endsWith(POST_TAG)) {

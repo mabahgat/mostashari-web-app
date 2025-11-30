@@ -13,8 +13,8 @@ if (!AZURE_CONFIG.service || !AZURE_CONFIG.index || !AZURE_CONFIG.queryKey) {
 
 const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
 const CACHE_KEY_PREFIX = "search_cache_";
-const PRE_TAG = "<em>";
-const POST_TAG = "</em>";
+export const PRE_TAG = "<em>";
+export const POST_TAG = "</em>";
 
 // Get cached results
 const getCachedResults = (query) => {
@@ -103,20 +103,25 @@ const parseSearchResults = (data) => {
       // If we have highlights, extract the highlighted terms and apply them to chunk
       if (highlightText && item.chunk) {
         // Find all text between PRE_TAG and POST_TAG in highlights
-        const regex = new RegExp(`${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^<]+?)${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "g");
+        // Use [\s\S]*? to match any character including newlines
+        const regex = new RegExp(`${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([\\s\\S]*?)${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "g");
         let match;
         const highlightedTerms = new Set();
         
         while ((match = regex.exec(highlightText)) !== null) {
-          highlightedTerms.add(match[1]);
+          // Normalize whitespace in the term (tabs and multiple spaces to single space)
+          const normalizedTerm = match[1].replace(/\s+/g, ' ');
+          highlightedTerms.add(normalizedTerm);
         }
         
         // Apply highlights to chunk for each highlighted term
         highlightedTerms.forEach((term) => {
-          // Escape special regex characters and replace exact matches (including surrounding spaces/punctuation)
+          // Escape special regex characters
           const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          const termRegex = new RegExp(escapedTerm, "g");
-          chunkWithHighlights = chunkWithHighlights.replace(termRegex, `${PRE_TAG}${term}${POST_TAG}`);
+          // Create a flexible regex that matches the term with any whitespace variations
+          const flexibleTerm = escapedTerm.replace(/\s+/g, '\\s+');
+          const termRegex = new RegExp(flexibleTerm, "g");
+          chunkWithHighlights = chunkWithHighlights.replace(termRegex, (match) => `${PRE_TAG}${match}${POST_TAG}`);
         });
       }
     }
