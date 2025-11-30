@@ -206,7 +206,7 @@ function App() {
                               {t.searchHit}
                             </summary>
                             <pre style={{ backgroundColor: "#f5f5f5", padding: "8px", borderRadius: "4px", overflow: "auto", maxHeight: "200px", fontSize: "10px", whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-                              {JSON.stringify(result.highlights, null, 2)}
+                              {JSON.stringify(result.highlights, null, 2).replace(new RegExp(PRE_TAG, "g"), "<<<").replace(new RegExp(POST_TAG, "g"), ">>>")}
                             </pre>
                           </details>
                         </div>
