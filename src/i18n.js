@@ -1,3 +1,15 @@
+const convertToHindiNumerals = (str) => {
+  const hindiDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  return String(str).replace(/\d/g, (digit) => hindiDigits[digit]);
+};
+
+const convertNumbers = (str, language) => {
+  if (language === 'ar') {
+    return convertToHindiNumerals(str);
+  }
+  return str;
+};
+
 const translations = {
   en: {
     appTitle: 'Mostashari.ai',
@@ -20,9 +32,10 @@ const translations = {
     errorMessage: 'خطأ في البحث. الرجاء المحاولة مرة أخرى.',
     noResults: 'لا توجد نتائج',
     resultsPerPage: 'النتائج لكل صفحة:',
-    foundResults: (count, page, totalPages) => `تم العثور على ${count} نتيجة (الصفحة ${page} من ${totalPages})`,
+    foundResults: (count, page, totalPages) => `تم العثور على ${convertToHindiNumerals(count)} نتيجة (الصفحة ${convertToHindiNumerals(page)} من ${convertToHindiNumerals(totalPages)})`,
     searchHit: 'اصابة البحث',
   },
 };
 
+export { convertNumbers, convertToHindiNumerals };
 export default translations;

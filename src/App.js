@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
-import translations from './i18n';
+import translations, { convertNumbers } from './i18n';
 import { searchAzure, PRE_TAG, POST_TAG } from './services/azureSearchService';
 
 function App() {
@@ -164,11 +164,11 @@ function App() {
                       onChange={handleResultsPerPageChange}
                       className="results-per-page-select"
                     >
-                      <option value={5}>5</option>
-                      <option value={10}>10</option>
-                      <option value={15}>15</option>
-                      <option value={20}>20</option>
-                      <option value={50}>50</option>
+                      <option value={5}>{convertNumbers(5, language)}</option>
+                      <option value={10}>{convertNumbers(10, language)}</option>
+                      <option value={15}>{convertNumbers(15, language)}</option>
+                      <option value={20}>{convertNumbers(20, language)}</option>
+                      <option value={50}>{convertNumbers(50, language)}</option>
                     </select>
                   </div>
 
@@ -246,7 +246,7 @@ function App() {
                           className={`pagination-btn ${currentPage === pageNum ? 'active' : ''}`}
                           onClick={() => handlePageChange(pageNum)}
                         >
-                          {pageNum}
+                          {convertNumbers(pageNum, language)}
                         </button>
                       ))}
 
