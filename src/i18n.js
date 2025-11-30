@@ -9,6 +9,7 @@ const translations = {
     noResults: 'No results found',
     resultsPerPage: 'Results per page:',
     foundResults: (count, page, totalPages) => `Found ${count} result${count !== 1 ? 's' : ''} (Page ${page} of ${totalPages})`,
+    searchHit: 'Search Hit',
   },
   ar: {
     appTitle: 'مستاشري',
@@ -20,6 +21,7 @@ const translations = {
     noResults: 'لا توجد نتائج',
     resultsPerPage: 'النتائج لكل صفحة:',
     foundResults: (count, page, totalPages) => `تم العثور على ${count} نتيجة (الصفحة ${page} من ${totalPages})`,
+    searchHit: 'اصابة البحث',
   },
 };
 

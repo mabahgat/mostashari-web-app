@@ -87,11 +87,11 @@ function App() {
   };
 
   const getResultContent = (result) => {
-    // The parser already normalizes the data
     return {
       title: result.title || "Result",
       description: result.description || "",
       subtitle: result.subtitle || "",
+      subtitle2: result.subtitle2 || "",
     };
   };
 
@@ -193,7 +193,22 @@ function App() {
                               {content.subtitle}
                             </p>
                           )}
+                          {content.subtitle2 && (
+                            <p style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>
+                              {content.subtitle2}
+                            </p>
+                          )}
                           <p>{renderHighlightedText(content.description)}</p>
+                          
+                          {/* Search Hit Details */}
+                          <details style={{ marginTop: "12px", fontSize: "11px", color: "#999", borderTop: "1px solid #eee", paddingTop: "8px" }}>
+                            <summary style={{ cursor: "pointer", fontWeight: "600", color: "#666" }}>
+                              {t.searchHit}
+                            </summary>
+                            <pre style={{ backgroundColor: "#f5f5f5", padding: "8px", borderRadius: "4px", overflow: "auto", maxHeight: "200px", fontSize: "10px", whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+                              {JSON.stringify(result.highlights, null, 2)}
+                            </pre>
+                          </details>
                         </div>
                       );
                     })}
