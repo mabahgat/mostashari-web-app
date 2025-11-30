@@ -35,6 +35,34 @@
   transform: translateY(0);
 }
 
+.language-toggle-top {
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
+  color: #000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.2);
+  white-space: nowrap;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.language-toggle-top:hover {
+  box-shadow: 0 3px 15px rgba(255, 215, 0, 0.3);
+  transform: scale(1.02);
+}
+
+.language-toggle-top:active {
+  transform: scale(0.98);
+}
+
 /* ===== INITIAL CENTERED SEARCH ===== */
 .container {
   width: 100%;
@@ -345,18 +373,13 @@
 /* ===== NARROW DESKTOP & TABLET RESPONSIVENESS ===== */
 @media (max-width: 1000px) {
   .top-search-container {
-    padding-right: 100px;
+    width: 100vw;
+    left: 0;
+    right: 0;
   }
 }
 
 @media (max-width: 768px) {
-  .language-toggle {
-    top: 16px;
-    right: 16px;
-    padding: 8px 14px;
-    font-size: 12px;
-  }
-
   .title {
     font-size: 36px;
   }
@@ -377,7 +400,9 @@
 
   .top-search-container {
     padding: 12px 16px;
-    padding-right: 110px;
+    width: 100vw;
+    left: 0;
+    right: 0;
   }
 
   .search-form-top {
@@ -411,16 +436,6 @@
     overflow-x: hidden;
   }
 
-  .language-toggle {
-    position: fixed;
-    top: 10px;
-    right: 12px;
-    padding: 10px 12px;
-    font-size: 11px;
-    font-weight: 600;
-    z-index: 102;
-  }
-
   .title {
     font-size: 28px;
   }
@@ -450,7 +465,6 @@
 
   .top-search-container {
     padding: 10px 12px;
-    padding-right: 110px;
     width: 100vw;
     left: 0;
     right: 0;
@@ -519,25 +533,6 @@
 
   .result-item p {
     font-size: 13px;
-  }
-}
-
-/* ===== VERY SMALL SCREENS (Below half screen) ===== */
-@media (max-width: 360px) {
-  .language-toggle {
-    padding: 8px 10px;
-    font-size: 10px;
-    top: 12px;
-    right: 10px;
-    min-width: 38px;
-  }
-
-  .top-search-container {
-    padding-right: 130px;
-  }
-
-  .search-input-top {
-    min-width: 50px;
   }
 }
 

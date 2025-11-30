@@ -114,15 +114,25 @@ function App() {
 
   return (
     <div className="App" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <button className="language-toggle" onClick={toggleLanguage}>
-        {language === 'ar' ? 'EN' : 'العربية'}
-      </button>
+
+      {!hasSearched && (
+        <button className="language-toggle" onClick={toggleLanguage}>
+          {language === 'ar' ? 'EN' : 'العربية'}
+        </button>
+      )}
 
       {hasSearched ? (
         <>
           {/* Search bar moved to top */}
           <div className="top-search-container">
             <form onSubmit={handleSubmit} className="search-form-top">
+              <button 
+                type="button" 
+                className="language-toggle-top"
+                onClick={toggleLanguage}
+              >
+                {language === 'ar' ? 'EN' : 'العربية'}
+              </button>
               <input
                 type="text"
                 value={input}
