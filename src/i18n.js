@@ -19,8 +19,7 @@ const translations = {
     searchingMessage: 'Searching...',
     errorMessage: 'Error searching. Please try again.',
     noResults: 'No results found',
-    resultsPerPage: 'Results per page:',
-    foundResults: (count, page, totalPages) => `Found ${count} result${count !== 1 ? 's' : ''} (Page ${page} of ${totalPages})`,
+    foundResults: (count) => `Found ${count} result${count !== 1 ? 's' : ''}`,
     searchHit: 'Search Hit',
   },
   ar: {
@@ -31,8 +30,7 @@ const translations = {
     searchingMessage: 'جاري البحث...',
     errorMessage: 'خطأ في البحث. الرجاء المحاولة مرة أخرى.',
     noResults: 'لا توجد نتائج',
-    resultsPerPage: 'النتائج لكل صفحة:',
-    foundResults: (count, page, totalPages) => `تم العثور على ${convertToHindiNumerals(count)} نتيجة (الصفحة ${convertToHindiNumerals(page)} من ${convertToHindiNumerals(totalPages)})`,
+    foundResults: (count) => `تم العثور على ${convertToHindiNumerals(count)} نتيجة`,
     searchHit: 'إصابة البحث',
   },
 };

@@ -10,8 +10,6 @@ function App() {
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [resultsPerPage, setResultsPerPage] = useState(10);
   const t = translations[language];
 
   // Update document title when language changes
@@ -19,19 +17,12 @@ function App() {
     document.title = t.appTitle;
   }, [language, t.appTitle]);
 
-  // Calculate pagination
-  const totalPages = Math.ceil(results.length / resultsPerPage);
-  const startIndex = (currentPage - 1) * resultsPerPage;
-  const endIndex = startIndex + resultsPerPage;
-  const currentResults = results.slice(startIndex, endIndex);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (input.trim()) {
       setLoading(true);
       setError(null);
       setHasSearched(true);
-      setCurrentPage(1); // Reset to first page on new search
       
       try {
         const searchResults = await searchAzure(input);
@@ -55,18 +46,6 @@ function App() {
     setResults([]);
     setHasSearched(false);
     setError(null);
-    setCurrentPage(1);
-  };
-
-  const handleResultsPerPageChange = (e) => {
-    setResultsPerPage(parseInt(e.target.value));
-    setCurrentPage(1); // Reset to first page
-  };
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    // Scroll to top of results
-    window.scrollTo({ top: 300, behavior: 'smooth' });
   };
 
   const getResultContent = (result) => {
@@ -76,23 +55,6 @@ function App() {
       subtitle: result.subtitle || "",
       subtitle2: result.subtitle2 || "",
     };
-  };
-
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxPages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxPages / 2));
-    let endPage = Math.min(totalPages, startPage + maxPages - 1);
-
-    if (endPage - startPage < maxPages - 1) {
-      startPage = Math.max(1, endPage - maxPages + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    return pages;
   };
 
   return (
@@ -153,120 +115,74 @@ function App() {
 
               {!loading && results.length > 0 && (
                 <>
-                  {/* Results per page selector */}
-                  <div className="results-controls">
-                    <label htmlFor="results-per-page">
-                      {t.resultsPerPage}
-                    </label>
-                    <select 
-                      id="results-per-page"
-                      value={resultsPerPage} 
-                      onChange={handleResultsPerPageChange}
-                      className="results-per-page-select"
-                    >
-                      <option value={5}>{convertNumbers(5, language)}</option>
-                      <option value={10}>{convertNumbers(10, language)}</option>
-                      <option value={15}>{convertNumbers(15, language)}</option>
-                      <option value={20}>{convertNumbers(20, language)}</option>
-                      <option value={50}>{convertNumbers(50, language)}</option>
-                    </select>
-                  </div>
-
                   <div className="results-list">
                     <div className="result-count">
-                      {t.foundResults(results.length, currentPage, totalPages)}
+                      {t.foundResults(convertNumbers(results.length, language))}
                     </div>
-                    {currentResults.map((result, index) => {
-                      const content = getResultContent(result);
-                      return (
-                        <div key={startIndex + index} className="result-item">
-                          <h4>{content.title}</h4>
-                          {content.subtitle && (
-                            <p style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>
-                              {content.subtitle}
-                            </p>
-                          )}
-                          {content.subtitle2 && (
-                            <p style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>
-                              {content.subtitle2}
-                            </p>
-                          )}
-                          <p>{content.description}</p>
-                          
-                          {/* Search Hit Details */}
-                          <details style={{ marginTop: "12px", fontSize: "11px", color: "#999", borderTop: "1px solid #eee", paddingTop: "8px" }}>
-                            <summary style={{ cursor: "pointer", fontWeight: "600", color: "#666" }}>
-                              {t.searchHit}
-                            </summary>
-                            <pre style={{ backgroundColor: "#f5f5f5", padding: "8px", borderRadius: "4px", overflow: "auto", maxHeight: "200px", fontSize: "10px", whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-                              {(() => {
-                                const jsonStr = JSON.stringify(result.highlights, null, 2);
-                                const preTagRegex = new RegExp(PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
-                                const postTagRegex = new RegExp(POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
-                                
-                                return jsonStr
-                                  .split(new RegExp(`(${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[\\s\\S]*?${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "g"))
-                                  .map((part, idx) => {
-                                    if (part.includes(PRE_TAG) && part.includes(POST_TAG)) {
-                                      const content = part.replace(preTagRegex, "").replace(postTagRegex, "");
-                                      return <span key={idx} style={{ backgroundColor: "#FFFF00", fontWeight: "bold" }}>{content}</span>;
-                                    }
-                                    return <span key={idx}>{part}</span>;
-                                  });
-                              })()}
-                            </pre>
-                          </details>
-                        </div>
-                      );
-                    })}
+                    {(() => {
+                      // Group results by title
+                      const grouped = {};
+                      results.forEach((result) => {
+                        const title = result.title || "Unknown";
+                        if (!grouped[title]) {
+                          grouped[title] = [];
+                        }
+                        grouped[title].push(result);
+                      });
+
+                      return Object.entries(grouped).map(([title, items], groupIndex) => (
+                        <details key={groupIndex} style={{ marginBottom: "24px", border: "2px solid #FFD700", borderRadius: "12px", padding: "0" }}>
+                          <summary style={{ fontSize: "16px", fontWeight: "700", color: "#000", paddingBottom: "8px", padding: "12px", cursor: "pointer", borderBottom: "2px solid #FFD700", backgroundColor: "#fffef5" }}>
+                            {title} <span style={{ fontSize: "14px", color: "#666", fontWeight: "400" }}>({convertNumbers(items.length, language)})</span>
+                          </summary>
+                          <div style={{ padding: "12px" }}>
+                            {items.map((result, itemIndex) => {
+                              const content = getResultContent(result);
+                              return (
+                                <div key={itemIndex} className="result-item" style={{ marginBottom: "12px" }}>
+                                  {content.subtitle && (
+                                    <h4 style={{ margin: "0 0 12px 0", color: "#000", fontSize: "18px", fontWeight: "600", borderBottom: "2px solid #FFD700", paddingBottom: "8px" }}>
+                                      {content.subtitle}
+                                    </h4>
+                                  )}
+                                  {content.subtitle2 && (
+                                    <p style={{ fontSize: "12px", color: "#666", marginBottom: "8px" }}>
+                                      {content.subtitle2}
+                                    </p>
+                                  )}
+                                  <p>{content.description}</p>
+                                  
+                                  {/* Search Hit Details */}
+                                  <details style={{ marginTop: "12px", fontSize: "11px", color: "#999", borderTop: "1px solid #eee", paddingTop: "8px" }}>
+                                    <summary style={{ cursor: "pointer", fontWeight: "600", color: "#666" }}>
+                                      {t.searchHit}
+                                    </summary>
+                                    <pre style={{ backgroundColor: "#f5f5f5", padding: "8px", borderRadius: "4px", overflow: "auto", maxHeight: "200px", fontSize: "10px", whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+                                      {(() => {
+                                        const jsonStr = JSON.stringify(result.highlights, null, 2);
+                                        const preTagRegex = new RegExp(PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
+                                        const postTagRegex = new RegExp(POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
+                                        
+                                        return jsonStr
+                                          .split(new RegExp(`(${PRE_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[\\s\\S]*?${POST_TAG.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "g"))
+                                          .map((part, idx) => {
+                                            if (part.includes(PRE_TAG) && part.includes(POST_TAG)) {
+                                              const content = part.replace(preTagRegex, "").replace(postTagRegex, "");
+                                              return <span key={idx} style={{ backgroundColor: "#FFFF00", fontWeight: "bold" }}>{content}</span>;
+                                            }
+                                            return <span key={idx}>{part}</span>;
+                                          });
+                                      })()}
+                                    </pre>
+                                  </details>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </details>
+                      ));
+                    })()}
                   </div>
-
-                  {/* Pagination controls */}
-                  {totalPages > 1 && (
-                    <div className="pagination">
-                      <button
-                        className="pagination-btn"
-                        onClick={() => handlePageChange(1)}
-                        disabled={currentPage === 1}
-                      >
-                        {language === 'ar' ? '«' : '«'}
-                      </button>
-
-                      <button
-                        className="pagination-btn"
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                      >
-                        {language === 'ar' ? '›' : '‹'}
-                      </button>
-
-                      {getPageNumbers().map((pageNum) => (
-                        <button
-                          key={pageNum}
-                          className={`pagination-btn ${currentPage === pageNum ? 'active' : ''}`}
-                          onClick={() => handlePageChange(pageNum)}
-                        >
-                          {convertNumbers(pageNum, language)}
-                        </button>
-                      ))}
-
-                      <button
-                        className="pagination-btn"
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                      >
-                        {language === 'ar' ? '‹' : '›'}
-                      </button>
-
-                      <button
-                        className="pagination-btn"
-                        onClick={() => handlePageChange(totalPages)}
-                        disabled={currentPage === totalPages}
-                      >
-                        {language === 'ar' ? '»' : '»'}
-                      </button>
-                    </div>
-                  )}
                 </>
               )}
 
