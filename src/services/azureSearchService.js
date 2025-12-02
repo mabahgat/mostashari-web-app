@@ -7,7 +7,8 @@ const AZURE_CONFIG = {
 };
 
 // Validate that required environment variables are set
-if (!AZURE_CONFIG.service || !AZURE_CONFIG.index || !AZURE_CONFIG.queryKey) {
+if (!AZURE_CONFIG.service || !AZURE_CONFIG.index || !AZURE_CONFIG.queryKey || 
+  !AZURE_CONFIG.semanticConfiguration || !AZURE_CONFIG.dnsSuffix) {
   console.error("❌ Missing required Azure Search configuration. Check your .env.local file.");
 }
 
