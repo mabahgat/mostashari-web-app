@@ -24,16 +24,16 @@ const translations = {
     searchHit: 'Search Hit',
   },
   ar: {
-    appTitle: 'مستاشري',
+    appTitle: 'مستشاري',
     title: 'بحث',
     placeholder: 'اسأل عن أي شيء...',
-    button: 'إرسال',
+    button: 'بحث',
     searchingMessage: 'جاري البحث...',
     errorMessage: 'خطأ في البحث. الرجاء المحاولة مرة أخرى.',
     noResults: 'لا توجد نتائج',
     resultsPerPage: 'النتائج لكل صفحة:',
     foundResults: (count, page, totalPages) => `تم العثور على ${convertToHindiNumerals(count)} نتيجة (الصفحة ${convertToHindiNumerals(page)} من ${convertToHindiNumerals(totalPages)})`,
-    searchHit: 'اصابة البحث',
+    searchHit: 'إصابة البحث',
   },
 };
 
