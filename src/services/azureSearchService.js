@@ -1,9 +1,9 @@
 const AZURE_CONFIG = {
-  index: process.env.REACT_APP_AZURE_SEARCH_INDEX,
+  index: "search-law-reg-6dec",
+  semanticConfiguration: "search-law-reg-6dec-semantic-configuration",
   queryKey: process.env.REACT_APP_AZURE_SEARCH_KEY,
   service: process.env.REACT_APP_AZURE_SEARCH_SERVICE,
   dnsSuffix: process.env.REACT_APP_AZURE_DNS_SUFFIX || "search.windows.net",
-  semanticConfiguration: process.env.REACT_APP_AZURE_SEMANTIC_CONFIG,
   apiVersion: process.env.REACT_APP_AZURE_API_VERSION || "2025-08-01-preview",
 };
 
@@ -98,7 +98,7 @@ const parseSearchResults = (data) => {
 
     return {
       title: item.header_1 || item.header_2 || item.title || "Result",
-      description: item.chunk || "",
+      description: item.chunk_ar || "",
       subtitle: item.header_2 || "",
       subtitle2: item.header_3 || "",
       source: item.title || "",
@@ -135,7 +135,7 @@ export const searchAzure = async (query) => {
             kind: "text",
             text: query,
             fields: "text_vector",
-            k: 50
+            exhaustive: true,
           }
         ],
         queryType: "semantic",
@@ -143,8 +143,9 @@ export const searchAzure = async (query) => {
         captions: "extractive",
         answers: "extractive",
         queryLanguage: "ar-SA",
-        searchFields: "header_1,chunk",
-        select: "chunk_id,parent_id,chunk,title,header_1,header_2,header_3",
+        searchFields: "header_1,chunk_ar",
+        select: "chunk_id,parent_id,chunk_ar,title,header_1,header_2,header_3",
+        highlight: "header_1,chunk_ar",
         highlightPreTag: PRE_TAG,
         highlightPostTag: POST_TAG,
       }),

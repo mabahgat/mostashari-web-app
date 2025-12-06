@@ -15,6 +15,18 @@ if (!commitHash) {
   }
 }
 
+// Get branch name
+let branchName = process.env.GITHUB_REF_NAME;
+
+if (!branchName) {
+  try {
+    branchName = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
+  } catch (error) {
+    branchName = 'unknown';
+    console.warn('⚠️  Could not get branch name from git');
+  }
+}
+
 // Get version from package.json
 const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
 const version = packageJson.version;
@@ -39,4 +51,4 @@ envContent += `\nREACT_APP_VERSION=${version}\nREACT_APP_COMMIT_HASH=${commitHas
 // Write back to .env.local
 fs.writeFileSync(envPath, envContent);
 
-console.log(`✅ Version set: v${version} (${commitHash.substring(0, 7)})`);
+console.log(`✅ Version set: v${version} (${commitHash.substring(0, 7)}) on branch "${branchName}"`);
