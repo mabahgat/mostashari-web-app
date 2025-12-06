@@ -4,6 +4,7 @@ const AZURE_CONFIG = {
   service: process.env.REACT_APP_AZURE_SEARCH_SERVICE,
   dnsSuffix: process.env.REACT_APP_AZURE_DNS_SUFFIX || "search.windows.net",
   semanticConfiguration: process.env.REACT_APP_AZURE_SEMANTIC_CONFIG,
+  apiVersion: process.env.REACT_APP_AZURE_API_VERSION || "2025-08-01-preview",
 };
 
 // Validate that required environment variables are set
@@ -116,7 +117,7 @@ export const searchAzure = async (query) => {
       return cachedResults;
     }
 
-    const searchUrl = `https://${AZURE_CONFIG.service}.${AZURE_CONFIG.dnsSuffix}/indexes/${AZURE_CONFIG.index}/docs/search?api-version=2021-04-30-Preview`;
+    const searchUrl = `https://${AZURE_CONFIG.service}.${AZURE_CONFIG.dnsSuffix}/indexes/${AZURE_CONFIG.index}/docs/search?api-version=${AZURE_CONFIG.apiVersion}`;
 
     console.log("🔍 Search Query:", query);
 
@@ -129,9 +130,18 @@ export const searchAzure = async (query) => {
       body: JSON.stringify({
         search: query,
         count: true,
+        vectorQueries: [
+          {
+            kind: "text",
+            text: query,
+            fields: "text_vector",
+            k: 50
+          }
+        ],
         queryType: "semantic",
         semanticConfiguration: AZURE_CONFIG.semanticConfiguration,
         captions: "extractive",
+        answers: "extractive",
         queryLanguage: "ar-SA",
         searchFields: "header_1,chunk",
         select: "chunk_id,parent_id,chunk,title,header_1,header_2,header_3",

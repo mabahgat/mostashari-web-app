@@ -22,6 +22,7 @@ function App() {
     if (input.trim()) {
       setLoading(true);
       setError(null);
+      setResults([]); // Reset results before search
       setHasSearched(true);
       
       try {
