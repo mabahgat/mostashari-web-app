@@ -12,6 +12,10 @@ function App() {
   const [error, setError] = useState(null);
   const t = translations[language];
 
+  // Get version from environment variable or package.json
+  const appVersion = process.env.REACT_APP_VERSION || 'dev';
+  const commitHash = process.env.REACT_APP_COMMIT_HASH || 'unknown';
+
   // Update document title when language changes
   useEffect(() => {
     document.title = t.appTitle;
@@ -194,6 +198,17 @@ function App() {
               )}
             </div>
           </div>
+
+          {/* Version footer */}
+          <footer style={{ 
+            textAlign: "center", 
+            padding: "16px", 
+            fontSize: "11px", 
+            color: "#ccc",
+            marginTop: "24px"
+          }}>
+            v{appVersion} • {commitHash.substring(0, 7)}
+          </footer>
         </>
       ) : (
         <>
@@ -217,6 +232,17 @@ function App() {
               </form>
             </div>
           </div>
+
+          {/* Version footer */}
+          <footer style={{ 
+            position: "fixed",
+            bottom: "16px",
+            left: "16px",
+            fontSize: "11px", 
+            color: "#ccc"
+          }}>
+            v{appVersion} • {commitHash.substring(0, 7)}
+          </footer>
         </>
       )}
     </div>
