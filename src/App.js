@@ -201,6 +201,9 @@ function App() {
 
           {/* Version footer */}
           <footer style={{ 
+            position: "fixed",
+            bottom: "16px",
+            left: "16px",
             textAlign: "center", 
             padding: "16px", 
             fontSize: "11px", 
