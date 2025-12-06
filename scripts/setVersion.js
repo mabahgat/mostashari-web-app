@@ -1,8 +1,19 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 // Get git commit hash
-const commitHash = process.env.GITHUB_SHA || 'unknown';
+let commitHash = process.env.GITHUB_SHA;
+
+// If not in GitHub Actions, try to get it from git command
+if (!commitHash) {
+  try {
+    commitHash = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+  } catch (error) {
+    commitHash = 'unknown';
+    console.warn('⚠️  Could not get commit hash from git');
+  }
+}
 
 // Get version from package.json
 const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
