@@ -3,7 +3,7 @@ const AZURE_CONFIG = {
   queryKey: process.env.REACT_APP_AZURE_SEARCH_KEY,
   service: process.env.REACT_APP_AZURE_SEARCH_SERVICE,
   dnsSuffix: process.env.REACT_APP_AZURE_DNS_SUFFIX || "search.windows.net",
-  semanticConfiguration: process.env.REACT_APP_AZURE_SEMANTIC_CONFIG || "rag-md-2-semantic-configuration-2",
+  semanticConfiguration: process.env.REACT_APP_AZURE_SEMANTIC_CONFIG,
 };
 
 // Validate that required environment variables are set
