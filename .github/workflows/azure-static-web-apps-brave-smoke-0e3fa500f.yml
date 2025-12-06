@@ -19,6 +19,17 @@ jobs:
         with:
           submodules: true
           lfs: false
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Set version from git commit
+        run: npm run set-version
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+      
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -36,6 +47,8 @@ jobs:
           REACT_APP_AZURE_SEARCH_SERVICE: ${{ secrets.REACT_APP_AZURE_SEARCH_SERVICE }}
           REACT_APP_AZURE_SEARCH_INDEX: ${{ secrets.REACT_APP_AZURE_SEARCH_INDEX }}
           REACT_APP_AZURE_SEARCH_KEY: ${{ secrets.REACT_APP_AZURE_SEARCH_KEY }}
+          REACT_APP_AZURE_SEMANTIC_CONFIG: ${{ secrets.REACT_APP_AZURE_SEMANTIC_CONFIG }}
+          REACT_APP_AZURE_API_VERSION: ${{ secrets.REACT_APP_AZURE_API_VERSION }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
