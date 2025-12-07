@@ -1,7 +1,7 @@
 import { convertNumbers } from '../i18n';
 import { PRE_TAG, POST_TAG } from '../services/azureSearchService';
 
-export const SearchResults = ({ results, language, loading, error, t }) => {
+export const SearchContent = ({ results, language, loading, error, t }) => {
   const getResultContent = (result) => {
     return {
       title: result.title || "Result",
