@@ -49,6 +49,8 @@ jobs:
           REACT_APP_AZURE_SEARCH_KEY: ${{ secrets.REACT_APP_AZURE_SEARCH_KEY }}
           REACT_APP_AZURE_SEMANTIC_CONFIG: ${{ vars.REACT_APP_AZURE_SEMANTIC_CONFIG }}
           REACT_APP_AZURE_API_VERSION: ${{ vars.REACT_APP_AZURE_API_VERSION }}
+          REACT_APP_AZURE_OPENAI_API_KEY: ${{ secrets.REACT_APP_AZURE_OPENAI_API_KEY }}
+          REACT_APP_AZURE_OPENAI_AGENT_INSTRUCTIONS: ${{ vars.REACT_APP_AZURE_OPENAI_AGENT_INSTRUCTIONS }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
