@@ -21,6 +21,12 @@ const translations = {
     noResults: 'No results found',
     foundResults: (count) => `Found ${count} result${count !== 1 ? 's' : ''}`,
     searchHit: 'Search Hit',
+    generate: 'Generate',
+    generateTitle: 'Generate Content',
+    prompt: 'Enter your prompt',
+    promptPlaceholder: 'Enter text here...',
+    result: 'Result',
+    clear: 'Clear',
   },
   ar: {
     appTitle: 'مستشاري',
@@ -32,6 +38,12 @@ const translations = {
     noResults: 'لا توجد نتائج',
     foundResults: (count) => `تم العثور على ${convertToHindiNumerals(count)} نتيجة`,
     searchHit: 'إصابة البحث',
+    generate: 'إنشاء',
+    generateTitle: 'إنشاء محتوى',
+    prompt: 'أدخل طلبك',
+    promptPlaceholder: 'أدخل النص هنا...',
+    result: 'النتيجة',
+    clear: 'مسح',
   },
 };
 
