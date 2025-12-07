@@ -61,3 +61,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_SMOKE_0E3FA500F }}
           action: "close"
+          app_location: "/" # Required input, set to your app source code path
