@@ -110,18 +110,6 @@ const getTabButtonStyle = (isActive, position) => ({
                 t={t} 
               />
             </div>
-
-            {/* Version footer */}
-            <footer style={{ 
-              textAlign: "center", 
-              padding: "16px", 
-              fontSize: "11px", 
-              color: "#ccc",
-              marginTop: "24px",
-              borderTop: "1px solid #eee"
-            }}>
-              v{appVersion} • {commitHash.substring(0, 7)} • {branchName}
-            </footer>
           </div>
         </>
       ) : (
@@ -174,19 +162,24 @@ const getTabButtonStyle = (isActive, position) => ({
               <GenerateCase t={t} language={language} />
             )}
           </div>
-
-          {/* Version footer */}
-          <footer style={{ 
-            position: "fixed",
-            bottom: "16px",
-            left: "16px",
-            fontSize: "11px", 
-            color: "#ccc"
-          }}>
-            v{appVersion} • {commitHash.substring(0, 7)} • {branchName}
-          </footer>
         </>
       )}
+      {/* Version footer */}
+      <footer style={{ 
+        position: "fixed",
+        bottom: "0",
+        left: "0",
+        right: "0",
+        textAlign: "center",
+        padding: "16px",
+        fontSize: "11px", 
+        color: "#ccc",
+        backgroundColor: "#ffffff",
+        borderTop: "1px solid #eee",
+        zIndex: "99"
+      }}>
+        v{appVersion} • {commitHash.substring(0, 7)} • {branchName}
+      </footer>
     </div>
   );
 }
