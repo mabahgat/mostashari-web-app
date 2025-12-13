@@ -33,6 +33,31 @@ function App() {
     setLanguage(language === 'ar' ? 'en' : 'ar');
   };
 
+const getTabContainerStyle = () => ({
+  display: 'flex',
+  gap: '0',
+  justifyContent: language === 'ar' ? 'flex-end' : 'flex-start',
+  marginBottom: '20px',
+  flexWrap: 'wrap',
+  padding: '0',
+  borderBottom: '1px solid #e0e0e0',
+});
+
+const getTabButtonStyle = (isActive, position) => ({
+  padding: '12px 16px',
+  fontSize: '13px',
+  fontWeight: isActive ? '600' : '400',
+  backgroundColor: 'transparent',
+  color: isActive ? '#000' : '#999',
+  border: 'none',
+  borderBottom: isActive ? '2px solid #000' : '2px solid transparent',
+  borderRadius: '0',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  margin: '0',
+  marginBottom: '-1px',
+});
+
   return (
     <div className="App" dir={language === 'ar' ? 'rtl' : 'ltr'}>
 
@@ -101,56 +126,30 @@ function App() {
         </>
       ) : (
         <>
-          {/* Initial view with tabs */}
+          {/* Language toggle */}
+          <button 
+            className="language-toggle" 
+            onClick={toggleLanguage}
+          >
+            {language === 'ar' ? 'EN' : 'العربية'}
+          </button>
+
+          {/* Tabs above content */}
           <div className="container">
-            {/* Tab buttons */}
-            <div style={{ 
-              display: 'flex', 
-              gap: '12px', 
-              justifyContent: 'center', 
-              marginBottom: '24px',
-              flexWrap: 'wrap'
-            }}>
+            <div style={getTabContainerStyle()}>
               <button
                 onClick={() => setActiveTab('search')}
-                style={{
-                  padding: '12px 24px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  backgroundColor: activeTab === 'search' ? '#FFD700' : '#f5f5f5',
-                  color: '#000',
-                  border: activeTab === 'search' ? '2px solid #FFC700' : '2px solid #ddd',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                }}
+                style={getTabButtonStyle(activeTab === 'search', language === 'ar' ? 'right' : 'left')}
               >
                 {t.search || 'Search'}
               </button>
               <button
                 onClick={() => setActiveTab('generate')}
-                style={{
-                  padding: '12px 24px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  backgroundColor: activeTab === 'generate' ? '#FFD700' : '#f5f5f5',
-                  color: '#000',
-                  border: activeTab === 'generate' ? '2px solid #FFC700' : '2px solid #ddd',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                }}
+                style={getTabButtonStyle(activeTab === 'generate', language === 'ar' ? 'left' : 'right')}
               >
                 {t.generate || 'Generate'}
               </button>
             </div>
-
-            {/* Language toggle */}
-            <button 
-              className="language-toggle" 
-              onClick={toggleLanguage}
-              style={{ top: '16px' }}
-            >
-              {language === 'ar' ? 'EN' : 'العربية'}
-            </button>
 
             {/* Tab content */}
             {activeTab === 'search' ? (
