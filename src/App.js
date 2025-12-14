@@ -33,52 +33,42 @@ function App() {
     setLanguage(language === 'ar' ? 'en' : 'ar');
   };
 
-const getTabContainerStyle = () => ({
-  display: 'flex',
-  gap: '0',
-  justifyContent: language === 'ar' ? 'flex-end' : 'flex-start',
-  marginBottom: '20px',
-  flexWrap: 'wrap',
-  padding: '0',
-  borderBottom: '1px solid #e0e0e0',
-});
+  const getTabContainerStyle = () => ({
+    display: 'flex',
+    gap: '0',
+    justifyContent: language === 'ar' ? 'flex-end' : 'flex-start',
+    marginBottom: '20px',
+    flexWrap: 'wrap',
+    padding: '0',
+    borderBottom: '1px solid #e0e0e0',
+  });
 
-const getTabButtonStyle = (isActive, position) => ({
-  padding: '12px 16px',
-  fontSize: '13px',
-  fontWeight: isActive ? '600' : '400',
-  backgroundColor: 'transparent',
-  color: isActive ? '#000' : '#999',
-  border: 'none',
-  borderBottom: isActive ? '2px solid #000' : '2px solid transparent',
-  borderRadius: '0',
-  cursor: 'pointer',
-  transition: 'all 0.2s ease',
-  margin: '0',
-  marginBottom: '-1px',
-});
+  const getTabButtonStyle = (isActive, position) => ({
+    padding: '12px 16px',
+    fontSize: '13px',
+    fontWeight: isActive ? '600' : '400',
+    backgroundColor: 'transparent',
+    color: isActive ? '#000' : '#999',
+    border: 'none',
+    borderBottom: isActive ? '2px solid #000' : '2px solid transparent',
+    borderRadius: '0',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    margin: '0',
+    marginBottom: '-1px',
+  });
 
   return (
     <div className="App" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-
-      {!hasSearched && activeTab === 'search' && (
-        <button className="language-toggle" onClick={toggleLanguage}>
-          {language === 'ar' ? 'EN' : 'العربية'}
-        </button>
-      )}
+      <button className="language-toggle" onClick={toggleLanguage}>
+        {language === 'ar' ? 'EN' : 'العربية'}
+      </button>
 
       {hasSearched && activeTab === 'search' ? (
         <>
           {/* Search bar moved to top */}
           <div className="top-search-container">
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '12px' }}>
-              <button 
-                type="button" 
-                className="language-toggle-top"
-                onClick={toggleLanguage}
-              >
-                {language === 'ar' ? 'EN' : 'العربية'}
-              </button>
               <input
                 type="text"
                 value={input}
@@ -114,13 +104,6 @@ const getTabButtonStyle = (isActive, position) => ({
         </>
       ) : (
         <>
-          {/* Language toggle */}
-          <button 
-            className="language-toggle" 
-            onClick={toggleLanguage}
-          >
-            {language === 'ar' ? 'EN' : 'العربية'}
-          </button>
 
           {/* Tabs above content */}
           <div className="container">
