@@ -2,7 +2,7 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const CACHE_KEY_PREFIX = "generate_cache_";
 
 const AZURE_CONFIG = {
-  endpoint: process.env.REACT_APP_AZURE_OPENAI_ENDPOINT || 'https://az-openai-law-1.openai.azure.com/',
+  project: process.env.REACT_APP_AZURE_OPENAI_PROJECT || 'az-openai-law-1',
   apiKey: process.env.REACT_APP_AZURE_OPENAI_API_KEY,
   deployment: process.env.REACT_APP_AZURE_OPENAI_DEPLOYMENT || 'gpt-4o',
   apiVersion: process.env.REACT_APP_AZURE_OPENAI_API_VERSION || '2025-01-01-preview',
@@ -105,7 +105,7 @@ export const generateContent = async (prompt, options = {}) => {
     console.log("🔍 Generating content for prompt:", prompt.substring(0, 50) + "...");
 
     const response = await fetch(
-      `${AZURE_CONFIG.endpoint}openai/deployments/${AZURE_CONFIG.deployment}/chat/completions?api-version=${AZURE_CONFIG.apiVersion}`,
+      `https://${AZURE_CONFIG.project}.openai.azure.com/openai/deployments/${AZURE_CONFIG.deployment}/chat/completions?api-version=${AZURE_CONFIG.apiVersion}`,
       {
         method: 'POST',
         headers: {
