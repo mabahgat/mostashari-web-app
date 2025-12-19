@@ -85,24 +85,24 @@ const clearExpiredCache = () => {
   }
 };
 
-export const generateContent = async (prompt, options = {}) => {
+export const generateContent = async (userInput, options = {}) => {
   const {
     maxTokens = 6553,
     temperature = 0.7,
     topP = 0.95,
     frequencyPenalty = 0,
     presencePenalty = 0,
-    systemMessage = AZURE_CONFIG.agentInstructions,
+    systemMessage: agentInstructions = AZURE_CONFIG.agentInstructions,
   } = options;
 
   try {
     // Check cache first
-    const cachedResult = getCachedResult(prompt);
+    const cachedResult = getCachedResult(userInput);
     if (cachedResult) {
       return cachedResult;
     }
 
-    console.log("🔍 Generating content for prompt:", prompt.substring(0, 50) + "...");
+    console.log("🔍 Generating content for prompt:", userInput.substring(0, 50) + "...");
 
     const response = await fetch(
       `https://${AZURE_CONFIG.project}.openai.azure.com/openai/deployments/${AZURE_CONFIG.deployment}/chat/completions?api-version=${AZURE_CONFIG.apiVersion}`,
@@ -116,11 +116,11 @@ export const generateContent = async (prompt, options = {}) => {
           messages: [
             {
               role: 'system',
-              content: systemMessage,
+              content: agentInstructions,
             },
             {
               role: 'user',
-              content: prompt,
+              content: userInput,
             },
           ],
           max_tokens: maxTokens,
@@ -146,7 +146,7 @@ export const generateContent = async (prompt, options = {}) => {
     const result = data.choices[0].message.content;
     
     // Cache the result
-    setCachedResult(prompt, result);
+    setCachedResult(userInput, result);
     
     return result;
   } catch (error) {
