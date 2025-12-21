@@ -1,21 +1,8 @@
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+const CACHE_DURATION = 24 * 60 * 60 * 1000;
 const CACHE_KEY_PREFIX = "generate_cache_";
 
-const AZURE_CONFIG = {
-  project: process.env.REACT_APP_AZURE_OPENAI_PROJECT || 'az-openai-law-1',
-  apiKey: process.env.REACT_APP_AZURE_OPENAI_API_KEY,
-  deployment: process.env.REACT_APP_AZURE_OPENAI_DEPLOYMENT || 'gpt-4o',
-  apiVersion: process.env.REACT_APP_AZURE_OPENAI_API_VERSION || '2025-01-01-preview',
-  agentInstructions: process.env.REACT_APP_AZURE_OPENAI_AGENT_INSTRUCTIONS,
-};
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 
-// Validate that required environment variables are set
-if (!AZURE_CONFIG.apiKey || !AZURE_CONFIG.agentInstructions) {
-  console.error("❌ Missing required Azure OpenAI configuration. Check your .env.local file.");
-  console.error("   Required: REACT_APP_AZURE_OPENAI_API_KEY, REACT_APP_AZURE_OPENAI_AGENT_INSTRUCTIONS");
-}
-
-// Get cached result
 const getCachedResult = (prompt) => {
   try {
     const cacheKey = CACHE_KEY_PREFIX + prompt.toLowerCase();
@@ -45,7 +32,6 @@ const getCachedResult = (prompt) => {
   }
 };
 
-// Store result in cache
 const setCachedResult = (prompt, data) => {
   try {
     const cacheKey = CACHE_KEY_PREFIX + prompt.toLowerCase();
@@ -56,11 +42,9 @@ const setCachedResult = (prompt, data) => {
     console.log(`💾 Cached result for prompt: "${prompt.substring(0, 50)}..."`);
   } catch (error) {
     console.error("❌ Error writing to cache:", error);
-    // Continue without caching if localStorage fails
   }
 };
 
-// Clear expired cache entries
 const clearExpiredCache = () => {
   try {
     const now = Date.now();
@@ -86,17 +70,7 @@ const clearExpiredCache = () => {
 };
 
 export const generateContent = async (userInput, options = {}) => {
-  const {
-    maxTokens = 6553,
-    temperature = 0.7,
-    topP = 0.95,
-    frequencyPenalty = 0,
-    presencePenalty = 0,
-    systemMessage: agentInstructions = AZURE_CONFIG.agentInstructions,
-  } = options;
-
   try {
-    // Check cache first
     const cachedResult = getCachedResult(userInput);
     if (cachedResult) {
       return cachedResult;
@@ -104,48 +78,29 @@ export const generateContent = async (userInput, options = {}) => {
 
     console.log("🔍 Generating content for prompt:", userInput.substring(0, 50) + "...");
 
-    const response = await fetch(
-      `https://${AZURE_CONFIG.project}.openai.azure.com/openai/deployments/${AZURE_CONFIG.deployment}/chat/completions?api-version=${AZURE_CONFIG.apiVersion}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': AZURE_CONFIG.apiKey,
-        },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: 'system',
-              content: agentInstructions,
-            },
-            {
-              role: 'user',
-              content: userInput,
-            },
-          ],
-          max_tokens: maxTokens,
-          temperature: temperature,
-          top_p: topP,
-          frequency_penalty: frequencyPenalty,
-          presence_penalty: presencePenalty,
-        }),
-      }
-    );
+    const response = await fetch(`${BACKEND_URL}/api/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.REACT_APP_BACKEND_API_KEY || 'your-secret-key-12345',
+      },
+      body: JSON.stringify({
+        input: userInput,
+        ...options,
+      }),
+    });
 
     if (!response.ok) {
       console.error("❌ API Error:", response.statusText, response.status);
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || 'Failed to generate content');
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `API Error: ${response.statusText}`);
     }
 
     console.log("✅ Generate Response received");
     const data = await response.json();
     
-    console.log(`📊 Tokens used - Prompt: ${data.usage.prompt_tokens}, Completion: ${data.usage.completion_tokens}, Total: ${data.usage.total_tokens}`);
+    const result = data.output_text || data.content || data.message?.content || '';
     
-    const result = data.choices[0].message.content;
-    
-    // Cache the result
     setCachedResult(userInput, result);
     
     return result;
@@ -155,5 +110,4 @@ export const generateContent = async (userInput, options = {}) => {
   }
 };
 
-// Clear expired cache entries on app startup
 clearExpiredCache();
