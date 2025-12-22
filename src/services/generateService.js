@@ -82,7 +82,7 @@ export const generateContent = async (userInput, options = {}) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.REACT_APP_BACKEND_API_KEY || 'your-secret-key-12345',
+        'x-api-key': process.env.REACT_APP_BACKEND_API_KEY,
       },
       body: JSON.stringify({
         input: userInput,
@@ -99,7 +99,10 @@ export const generateContent = async (userInput, options = {}) => {
     console.log("✅ Generate Response received");
     const data = await response.json();
     
-    const result = data.output_text || data.content || data.message?.content || '';
+    // Extract text from nested response structure: output -> message -> content -> output_text -> text
+    const messageOutput = data.output?.find(item => item.type === 'message');
+    const textContent = messageOutput?.content?.find(item => item.type === 'output_text');
+    const result = textContent?.text || '';
     
     setCachedResult(userInput, result);
     
