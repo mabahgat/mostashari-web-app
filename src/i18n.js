@@ -13,6 +13,7 @@ const convertNumbers = (str, language) => {
 const translations = {
   en: {
     appTitle: 'Mostashari.ai',
+    search: 'Search',
     title: 'Search',
     placeholder: 'Ask me anything...',
     button: 'Send',
@@ -21,9 +22,16 @@ const translations = {
     noResults: 'No results found',
     foundResults: (count) => `Found ${count} result${count !== 1 ? 's' : ''}`,
     searchHit: 'Search Hit',
+    generate: 'Generate',
+    generateTitle: 'Generate Content',
+    prompt: 'Enter your prompt',
+    promptPlaceholder: 'Enter text here...',
+    result: 'Result',
+    clear: 'Clear',
   },
   ar: {
     appTitle: 'مستشاري',
+    search: 'بحث',
     title: 'بحث',
     placeholder: 'اسأل عن أي شيء...',
     button: 'بحث',
@@ -32,6 +40,12 @@ const translations = {
     noResults: 'لا توجد نتائج',
     foundResults: (count) => `تم العثور على ${convertToHindiNumerals(count)} نتيجة`,
     searchHit: 'إصابة البحث',
+    generate: 'كتابة',
+    generateTitle: 'كتابة محتوى',
+    prompt: 'أدخل طلبك',
+    promptPlaceholder: 'أدخل النص هنا...',
+    result: 'النتيجة',
+    clear: 'مسح',
   },
 };
 

@@ -44,11 +44,14 @@ jobs:
           output_location: "build" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
         env:
+          # Search Service
           REACT_APP_AZURE_SEARCH_SERVICE: ${{ vars.REACT_APP_AZURE_SEARCH_SERVICE }}
           REACT_APP_AZURE_SEARCH_INDEX: ${{ vars.REACT_APP_AZURE_SEARCH_INDEX }}
           REACT_APP_AZURE_SEARCH_KEY: ${{ secrets.REACT_APP_AZURE_SEARCH_KEY }}
           REACT_APP_AZURE_SEMANTIC_CONFIG: ${{ vars.REACT_APP_AZURE_SEMANTIC_CONFIG }}
-          REACT_APP_AZURE_API_VERSION: ${{ vars.REACT_APP_AZURE_API_VERSION }}
+          # App Backend for Generative AI
+          REACT_APP_BACKEND_URL: ${{ vars.REACT_APP_BACKEND_URL }}
+          REACT_APP_BACKEND_API_KEY: ${{ secrets.REACT_APP_BACKEND_API_KEY }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
