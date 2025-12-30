@@ -7,7 +7,7 @@ import { GenerateCase } from './components/GenerateCase';
 
 function App() {
   const [language, setLanguage] = useState('ar');
-  const [activeTab, setActiveTab] = useState('search'); // 'search' or 'generate'
+  const [activeTab, setActiveTab] = useState('regulations'); // 'regulations', 'cases', or 'generate'
   const t = translations[language];
 
   const appVersion = process.env.REACT_APP_VERSION || 'dev';
@@ -15,15 +15,26 @@ function App() {
   const branchName = process.env.REACT_APP_BRANCH_NAME || 'unknown';
 
   const {
-    input,
-    setInput,
-    results,
-    hasSearched,
-    loading,
-    error,
-    handleSubmit,
-    handleNewSearch,
-  } = useSearch(t);
+    input: regulationsInput,
+    setInput: setRegulationsInput,
+    results: regulationsResults,
+    hasSearched: regulationsHasSearched,
+    loading: regulationsLoading,
+    error: regulationsError,
+    handleSubmit: regulationsHandleSubmit,
+    handleNewSearch: regulationsHandleNewSearch,
+  } = useSearch(t, 'REG');
+
+  const {
+    input: casesInput,
+    setInput: setCasesInput,
+    results: casesResults,
+    hasSearched: casesHasSearched,
+    loading: casesLoading,
+    error: casesError,
+    handleSubmit: casesHandleSubmit,
+    handleNewSearch: casesHandleNewSearch,
+  } = useSearch(t, 'CASES');
 
   useEffect(() => {
     document.title = t.appTitle;
@@ -64,25 +75,30 @@ function App() {
         {language === 'ar' ? 'EN' : 'العربية'}
       </button>
 
-      {hasSearched && activeTab === 'search' ? (
+      {(regulationsHasSearched && activeTab === 'regulations') || (casesHasSearched && activeTab === 'cases') ? (
         <>
           {/* Search bar moved to top */}
           <div className="top-search-container">
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '12px' }}>
               <input
                 type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={activeTab === 'regulations' ? regulationsInput : casesInput}
+                onChange={(e) => activeTab === 'regulations' ? setRegulationsInput(e.target.value) : setCasesInput(e.target.value)}
                 placeholder={t.placeholder}
                 className="search-input-top"
               />
-              <button type="submit" className="search-button-top" disabled={loading} onClick={handleSubmit}>
-                {loading ? '⏳' : t.button}
+              <button 
+                type="submit" 
+                className="search-button-top" 
+                disabled={activeTab === 'regulations' ? regulationsLoading : casesLoading} 
+                onClick={activeTab === 'regulations' ? regulationsHandleSubmit : casesHandleSubmit}
+              >
+                {(activeTab === 'regulations' ? regulationsLoading : casesLoading) ? '⏳' : t.button}
               </button>
               <button 
                 type="button" 
                 className="new-search-button"
-                onClick={handleNewSearch}
+                onClick={activeTab === 'regulations' ? regulationsHandleNewSearch : casesHandleNewSearch}
               >
                 ✕
               </button>
@@ -93,10 +109,10 @@ function App() {
           <div className="results-container">
             <div className="results-wrapper">
               <SearchContent 
-                results={results} 
+                results={activeTab === 'regulations' ? regulationsResults : casesResults} 
                 language={language} 
-                loading={loading} 
-                error={error} 
+                loading={activeTab === 'regulations' ? regulationsLoading : casesLoading} 
+                error={activeTab === 'regulations' ? regulationsError : casesError} 
                 t={t} 
               />
             </div>
@@ -109,10 +125,16 @@ function App() {
           <div className="container">
             <div style={getTabContainerStyle()}>
               <button
-                onClick={() => setActiveTab('search')}
-                style={getTabButtonStyle(activeTab === 'search', language === 'ar' ? 'right' : 'left')}
+                onClick={() => setActiveTab('regulations')}
+                style={getTabButtonStyle(activeTab === 'regulations', language === 'ar' ? 'right' : 'left')}
               >
-                {t.search || 'Search'}
+                {t.regulationsSearch || 'Regulations Search'}
+              </button>
+              <button
+                onClick={() => setActiveTab('cases')}
+                style={getTabButtonStyle(activeTab === 'cases', language === 'ar' ? 'center' : 'center')}
+              >
+                {t.casesSearch || 'Cases Search'}
               </button>
               <button
                 onClick={() => setActiveTab('generate')}
@@ -123,15 +145,33 @@ function App() {
             </div>
 
             {/* Tab content */}
-            {activeTab === 'search' ? (
+            {activeTab === 'regulations' ? (
               <div className="content">
                 <h1 className="title">{t.appTitle}</h1>
                 
-                <form onSubmit={handleSubmit} className="search-form">
+                <form onSubmit={regulationsHandleSubmit} className="search-form">
                   <input
                     type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    value={regulationsInput}
+                    onChange={(e) => setRegulationsInput(e.target.value)}
+                    placeholder={t.placeholder}
+                    className="search-input"
+                    autoFocus
+                  />
+                  <button type="submit" className="search-button">
+                    {t.button}
+                  </button>
+                </form>
+              </div>
+            ) : activeTab === 'cases' ? (
+              <div className="content">
+                <h1 className="title">{t.appTitle}</h1>
+                
+                <form onSubmit={casesHandleSubmit} className="search-form">
+                  <input
+                    type="text"
+                    value={casesInput}
+                    onChange={(e) => setCasesInput(e.target.value)}
                     placeholder={t.placeholder}
                     className="search-input"
                     autoFocus

@@ -13,6 +13,8 @@ const convertNumbers = (str, language) => {
 const translations = {
   en: {
     appTitle: 'Mostashari.ai',
+    regulationsSearch: 'Regulations Search',
+    casesSearch: 'Cases Search',
     search: 'Search',
     title: 'Search',
     placeholder: 'Ask me anything...',
@@ -31,6 +33,8 @@ const translations = {
   },
   ar: {
     appTitle: 'مستشاري',
+    regulationsSearch: 'بحث الأنظمة',
+    casesSearch: 'بحث السوابق',
     search: 'بحث',
     title: 'بحث',
     placeholder: 'اسأل عن أي شيء...',
