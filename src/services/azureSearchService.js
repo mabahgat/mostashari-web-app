@@ -23,14 +23,21 @@ const AZURE_CONFIG_REG = createAzureConfig('REG');
 const AZURE_CONFIG_CASES = createAzureConfig('CASES');
 
 const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
-const CACHE_KEY_PREFIX = "search_cache_";
+const CACHE_KEY_PREFIX_REG = "search_cache_reg_";
+const CACHE_KEY_PREFIX_CASES = "search_cache_cases_";
 export const PRE_TAG = "<em>";
 export const POST_TAG = "</em>";
 
+// Get cache key prefix based on config type
+const getCacheKeyPrefix = (configType = 'REG') => {
+  return configType === 'CASES' ? CACHE_KEY_PREFIX_CASES : CACHE_KEY_PREFIX_REG;
+};
+
 // Get cached results
-const getCachedResults = (query) => {
+const getCachedResults = (query, configType = 'REG') => {
   try {
-    const cacheKey = CACHE_KEY_PREFIX + query.toLowerCase();
+    const prefix = getCacheKeyPrefix(configType);
+    const cacheKey = prefix + query.toLowerCase();
     const cached = localStorage.getItem(cacheKey);
     
     if (!cached) {
@@ -58,9 +65,10 @@ const getCachedResults = (query) => {
 };
 
 // Store results in cache
-const setCachedResults = (query, data) => {
+const setCachedResults = (query, data, configType = 'REG') => {
   try {
-    const cacheKey = CACHE_KEY_PREFIX + query.toLowerCase();
+    const prefix = getCacheKeyPrefix(configType);
+    const cacheKey = prefix + query.toLowerCase();
     localStorage.setItem(cacheKey, JSON.stringify({
       data,
       timestamp: Date.now(),
@@ -80,7 +88,7 @@ const clearExpiredCache = () => {
     
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith(CACHE_KEY_PREFIX)) {
+      if (key && (key.startsWith(CACHE_KEY_PREFIX_REG) || key.startsWith(CACHE_KEY_PREFIX_CASES))) {
         const cached = JSON.parse(localStorage.getItem(key));
         if (now - cached.timestamp > CACHE_DURATION) {
           keysToDelete.push(key);
@@ -124,7 +132,7 @@ export const searchAzure = async (query, configType = 'REG') => {
     const AZURE_CONFIG = configType === 'CASES' ? AZURE_CONFIG_CASES : AZURE_CONFIG_REG;
     
     // Check cache first
-    const cachedResults = getCachedResults(query);
+    const cachedResults = getCachedResults(query, configType);
     if (cachedResults) {
       return cachedResults;
     }
@@ -176,7 +184,7 @@ export const searchAzure = async (query, configType = 'REG') => {
     const results = parseSearchResults(data);
     
     // Cache the results
-    setCachedResults(query, results);
+    setCachedResults(query, results, configType);
     
     return results;
   } catch (error) {
