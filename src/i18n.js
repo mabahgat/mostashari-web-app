@@ -28,6 +28,12 @@ const translations = {
     promptPlaceholder: 'Enter text here...',
     result: 'Result',
     clear: 'Clear',
+    chat: 'Chat',
+    startChatting: 'Start chatting to begin...',
+    typing: 'Typing...',
+    chatPlaceholder: 'Type your message...',
+    send: 'Send',
+    newConversation: 'New Conversation',
   },
   ar: {
     appTitle: 'مستشاري',
@@ -46,6 +52,12 @@ const translations = {
     promptPlaceholder: 'أدخل النص هنا...',
     result: 'النتيجة',
     clear: 'مسح',
+    chat: 'دردشة',
+    startChatting: 'ابدأ الدردشة...',
+    typing: 'جاري الكتابة...',
+    chatPlaceholder: 'اكتب رسالتك...',
+    send: 'إرسال',
+    newConversation: 'محادثة جديدة',
   },
 };
 

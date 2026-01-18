@@ -4,10 +4,11 @@ import translations from './i18n';
 import { useSearch } from './hooks/useSearch';
 import { SearchContent } from './components/SearchContent';
 import { GenerateCase } from './components/GenerateCase';
+import { ChatContent } from './components/ChatContent';
 
 function App() {
   const [language, setLanguage] = useState('ar');
-  const [activeTab, setActiveTab] = useState('search'); // 'search' or 'generate'
+  const [activeTab, setActiveTab] = useState('search'); // 'search', 'generate', or 'chat'
   const t = translations[language];
 
   const appVersion = process.env.REACT_APP_VERSION || 'dev';
@@ -120,6 +121,12 @@ function App() {
               >
                 {t.generate || 'Generate'}
               </button>
+              <button
+                onClick={() => setActiveTab('chat')}
+                style={getTabButtonStyle(activeTab === 'chat', language === 'ar' ? 'left' : 'right')}
+              >
+                {t.chat || 'Chat'}
+              </button>
             </div>
 
             {/* Tab content */}
@@ -141,26 +148,16 @@ function App() {
                   </button>
                 </form>
               </div>
-            ) : (
+            ) : activeTab === 'generate' ? (
               <GenerateCase t={t} language={language} />
+            ) : (
+              <ChatContent t={t} language={language} />
             )}
           </div>
         </>
       )}
       {/* Version footer */}
-      <footer style={{ 
-        position: "fixed",
-        bottom: "0",
-        left: "0",
-        right: "0",
-        textAlign: "center",
-        padding: "16px",
-        fontSize: "11px", 
-        color: "#ccc",
-        backgroundColor: "#ffffff",
-        borderTop: "1px solid #eee",
-        zIndex: "99"
-      }}>
+      <footer className="footer">
         v{appVersion} • {commitHash.substring(0, 7)} • {branchName}
       </footer>
     </div>

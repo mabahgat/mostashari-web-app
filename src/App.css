@@ -3,9 +3,11 @@
   min-height: 100vh;
   background-color: #ffffff;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 20px;
+  padding-top: 80px;
+  padding-bottom: 100px;
   position: relative;
 }
 
@@ -73,7 +75,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 40px;
   background-image: url('/public/riyadh-skyline.png');
   background-size: cover;
@@ -83,6 +85,8 @@
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   position: relative;
+  width: 100%;
+  max-width: 800px;
 }
 
 .content::before {
@@ -169,7 +173,7 @@
 /* ===== TOP SEARCH BAR (AFTER SEARCH) ===== */
 .top-search-container {
   position: fixed;
-  top: 0;
+  top: 60px;
   left: 0;
   right: 0;
   background-image: url('/public/riyadh-skyline.png');
@@ -283,10 +287,11 @@
 /* ===== RESULTS SECTION ===== */
 .results-container {
   width: 100%;
-  padding-top: 100px;
+  padding-top: 120px;
   padding-bottom: 40px;
   display: flex;
   justify-content: center;
+  margin-top: 0;
 }
 
 .results-wrapper {
@@ -672,4 +677,21 @@
     padding: 6px 10px;
     font-size: 12px;
   }
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 16px;
+  font-size: 11px;
+  color: #ccc;
+  background-color: #ffffff;
+  border-top: 1px solid #eee;
+  z-index: 99;
+  width: 100%;
+  box-sizing: border-box;
 }
