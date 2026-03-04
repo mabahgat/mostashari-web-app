@@ -3,9 +3,14 @@ const CACHE_KEY_PREFIX = "generate_cache_";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 
+// Normalize whitespace to avoid cache misses due to extra spaces, line breaks, tabs, etc.
+const normalizeWhitespace = (text) => {
+  return text.trim().replace(/\s+/g, ' ').toLowerCase();
+};
+
 const getCachedResult = (prompt) => {
   try {
-    const cacheKey = CACHE_KEY_PREFIX + prompt.toLowerCase();
+    const cacheKey = CACHE_KEY_PREFIX + normalizeWhitespace(prompt);
     const cached = localStorage.getItem(cacheKey);
     
     if (!cached) {
@@ -34,7 +39,7 @@ const getCachedResult = (prompt) => {
 
 const setCachedResult = (prompt, data) => {
   try {
-    const cacheKey = CACHE_KEY_PREFIX + prompt.toLowerCase();
+    const cacheKey = CACHE_KEY_PREFIX + normalizeWhitespace(prompt);
     localStorage.setItem(cacheKey, JSON.stringify({
       data,
       timestamp: Date.now(),
@@ -69,7 +74,7 @@ const clearExpiredCache = () => {
   }
 };
 
-export const generateContent = async (userInput, options = {}) => {
+export const generateContent = async (userInput) => {
   try {
     const cachedResult = getCachedResult(userInput);
     if (cachedResult) {
@@ -86,7 +91,6 @@ export const generateContent = async (userInput, options = {}) => {
       },
       body: JSON.stringify({
         input: userInput,
-        ...options,
       }),
     });
 

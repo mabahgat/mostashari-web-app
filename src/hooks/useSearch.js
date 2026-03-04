@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { searchAzure } from '../services/azureSearchService';
 
-export const useSearch = (translations) => {
+export const useSearch = (translations, searchType = 'REG') => {
   const [input, setInput] = useState('');
   const [results, setResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
@@ -17,7 +17,7 @@ export const useSearch = (translations) => {
       setHasSearched(true);
       
       try {
-        const searchResults = await searchAzure(input);
+        const searchResults = await searchAzure(input, searchType);
         setResults(searchResults);
         console.log('Search results:', searchResults);
       } catch (err) {
