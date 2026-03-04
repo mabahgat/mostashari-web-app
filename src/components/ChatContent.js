@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { sendChatMessage } from '../services/chatService';
+import { sendChatMessage, clearCurrentSession } from '../services/chatService';
 
 export const ChatContent = ({ t, language }) => {
   const [messages, setMessages] = useState([]);
@@ -29,9 +29,22 @@ export const ChatContent = ({ t, language }) => {
     setMessages(prev => [...prev, { type: 'user', text: userMessage }]);
 
     try {
-      const response = await sendChatMessage(userMessage);
+      // Build conversation history for backend (excluding error messages)
+      const conversationHistory = messages
+        .filter(msg => msg.type !== 'error')
+        .map(msg => ({
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: msg.text,
+        }));
+
+      // Send message with conversation history
+      const result = await sendChatMessage(userMessage, conversationHistory);
+      
+      // Extract response from the returned object
+      const assistantResponse = result.response;
+      
       // Add bot response to chat
-      setMessages(prev => [...prev, { type: 'bot', text: response }]);
+      setMessages(prev => [...prev, { type: 'bot', text: assistantResponse }]);
     } catch (err) {
       setError(err.message || 'Error sending message');
       console.error('Chat error:', err);
@@ -46,6 +59,7 @@ export const ChatContent = ({ t, language }) => {
     setMessages([]);
     setInput('');
     setError(null);
+    clearCurrentSession();
   };
 
   const hasMessages = messages.length > 0;
