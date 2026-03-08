@@ -62,6 +62,15 @@ export const ChatContent = ({ t, language }) => {
     clearCurrentSession();
   };
 
+  const handleCopyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log('✅ Copied to clipboard');
+    } catch (err) {
+      console.error('❌ Failed to copy to clipboard:', err);
+    }
+  };
+
   const hasMessages = messages.length > 0;
 
   if (!hasMessages) {
@@ -215,6 +224,9 @@ export const ChatContent = ({ t, language }) => {
               display: 'flex',
               justifyContent: msg.type === 'user' ? (language === 'ar' ? 'flex-start' : 'flex-end') : (language === 'ar' ? 'flex-end' : 'flex-start'),
               marginBottom: '8px',
+              position: 'relative',
+              alignItems: 'flex-start',
+              gap: '8px',
             }}
           >
             <div
@@ -230,6 +242,35 @@ export const ChatContent = ({ t, language }) => {
             >
               {msg.text}
             </div>
+            {msg.type === 'bot' && (
+              <button
+                onClick={() => handleCopyToClipboard(msg.text)}
+                style={{
+                  padding: '6px 10px',
+                  fontSize: '12px',
+                  backgroundColor: '#f0f0f0',
+                  color: '#666',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  marginTop: '2px',
+                }}
+                title="Copy response"
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#e0e0e0';
+                  e.target.style.borderColor = '#ccc';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#f0f0f0';
+                  e.target.style.borderColor = '#ddd';
+                }}
+              >
+                📋
+              </button>
+            )}
           </div>
         ))}
         {loading && (
