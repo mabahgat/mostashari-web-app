@@ -152,7 +152,7 @@ function App() {
             </div>
 
             {/* Tab content */}
-            {activeTab === 'regulations' ? (
+            <div style={{ display: activeTab === 'regulations' ? 'block' : 'none' }}>
               <div className="content">
                 <h1 className="title">{t.appTitle}</h1>
                 
@@ -170,7 +170,8 @@ function App() {
                   </button>
                 </form>
               </div>
-            ) : activeTab === 'cases' ? (
+            </div>
+            <div style={{ display: activeTab === 'cases' ? 'block' : 'none' }}>
               <div className="content">
                 <h1 className="title">{t.appTitle}</h1>
                 
@@ -188,11 +189,13 @@ function App() {
                   </button>
                 </form>
               </div>
-            ) : activeTab === 'generate' ? (
+            </div>
+            <div style={{ display: activeTab === 'generate' ? 'block' : 'none' }}>
               <GenerateCase t={t} language={language} />
-            ) : (
+            </div>
+            <div style={{ display: activeTab === 'chat' ? 'block' : 'none' }}>
               <ChatContent t={t} language={language} />
-            )}
+            </div>
           </div>
         </>
       )}
