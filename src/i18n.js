@@ -36,6 +36,9 @@ const translations = {
     chatPlaceholder: 'Type your message...',
     send: 'Send',
     newConversation: 'New Conversation',
+    copyResponse: 'Copy response',
+    downloadResponse: 'Download response',
+    downloadConversation: 'Download Conversation',
   },
   ar: {
     appTitle: 'مستشاري',
@@ -62,6 +65,9 @@ const translations = {
     chatPlaceholder: 'اكتب رسالتك...',
     send: 'إرسال',
     newConversation: 'محادثة جديدة',
+    copyResponse: 'نسخ الرد',
+    downloadResponse: 'تحميل الرد',
+    downloadConversation: 'تحميل المحادثة',
   },
 };
 

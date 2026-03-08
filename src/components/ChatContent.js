@@ -87,6 +87,31 @@ export const ChatContent = ({ t, language }) => {
     }
   };
 
+  const handleDownloadConversation = () => {
+    try {
+      let conversationText = `${t.chat || 'Chat'} - ${new Date().toLocaleString()}\n`;
+      conversationText += '='.repeat(50) + '\n\n';
+
+      messages.forEach((msg, idx) => {
+        const role = msg.type === 'user' ? (t.send || 'User') : (t.chat || 'Assistant');
+        conversationText += `${idx + 1}. ${role}:\n`;
+        conversationText += msg.text + '\n\n';
+      });
+
+      const element = document.createElement('a');
+      const file = new Blob([conversationText], { type: 'text/plain' });
+      element.href = URL.createObjectURL(file);
+      element.download = `conversation-${new Date().getTime()}.txt`;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      URL.revokeObjectURL(element.href);
+      console.log('✅ Downloaded conversation as text file');
+    } catch (err) {
+      console.error('❌ Failed to download conversation:', err);
+    }
+  };
+
   const hasMessages = messages.length > 0;
 
   if (!hasMessages) {
@@ -196,27 +221,59 @@ export const ChatContent = ({ t, language }) => {
         flexShrink: 0,
       }}>
         <h1 className="title" style={{ margin: 0 }}>{t.chat || 'Chat'}</h1>
-        <button
-          type="button"
-          onClick={handleClearChat}
-          style={{
-            padding: '8px 16px',
-            fontSize: '12px',
-            fontWeight: '600',
-            backgroundColor: '#f0f0f0',
-            color: '#666',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s ease',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#e0e0e0'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#f0f0f0'}
-        >
-          + {t.newConversation || 'New Conversation'}
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            type="button"
+            onClick={handleDownloadConversation}
+            disabled={messages.length === 0}
+            style={{
+              padding: '8px 12px',
+              fontSize: '12px',
+              fontWeight: '600',
+              backgroundColor: messages.length === 0 ? '#e0e0e0' : '#f0f0f0',
+              color: '#666',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: messages.length === 0 ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s ease',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+              opacity: messages.length === 0 ? 0.6 : 1,
+            }}
+            onMouseOver={(e) => {
+              if (messages.length > 0) {
+                e.target.style.backgroundColor = '#e0e0e0';
+              }
+            }}
+            onMouseOut={(e) => {
+              e.target.style.backgroundColor = messages.length === 0 ? '#e0e0e0' : '#f0f0f0';
+            }}
+            title={t.downloadConversation || 'Download Conversation'}
+          >
+            ⬇️ {t.downloadConversation || 'Download'}
+          </button>
+          <button
+            type="button"
+            onClick={handleClearChat}
+            style={{
+              padding: '8px 16px',
+              fontSize: '12px',
+              fontWeight: '600',
+              backgroundColor: '#f0f0f0',
+              color: '#666',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s ease',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#e0e0e0'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+          >
+            + {t.newConversation || 'New Conversation'}
+          </button>
+        </div>
       </div>
 
       <div style={{
@@ -283,7 +340,7 @@ export const ChatContent = ({ t, language }) => {
                     minWidth: '30px',
                     textAlign: 'center',
                   }}
-                  title="Copy response"
+                  title={t.copyResponse || 'Copy response'}
                   onMouseOver={(e) => {
                     e.target.style.backgroundColor = '#e0e0e0';
                     e.target.style.borderColor = '#ccc';
@@ -310,7 +367,7 @@ export const ChatContent = ({ t, language }) => {
                     minWidth: '30px',
                     textAlign: 'center',
                   }}
-                  title="Download response"
+                  title={t.downloadResponse || 'Download response'}
                   onMouseOver={(e) => {
                     e.target.style.backgroundColor = '#e0e0e0';
                     e.target.style.borderColor = '#ccc';
