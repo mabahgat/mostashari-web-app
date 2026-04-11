@@ -1,26 +1,6 @@
-// Create Azure Search configuration from environment variables
-const createAzureConfig = (envPrefix = 'REG') => {
-  const config = {
-    index: process.env[`REACT_APP_${envPrefix}_SEARCH_INDEX`],
-    queryKey: process.env[`REACT_APP_${envPrefix}_SEARCH_KEY`],
-    service: process.env[`REACT_APP_${envPrefix}_SEARCH_SERVICE`],
-    dnsSuffix: process.env[`REACT_APP_${envPrefix}_DNS_SUFFIX`] || "search.windows.net",
-    semanticConfiguration: process.env[`REACT_APP_${envPrefix}_SEMANTIC_CONFIG`],
-    apiVersion: process.env[`REACT_APP_${envPrefix}_API_VERSION`] || "2025-08-01-preview",
-  };
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
 
-  // Validate that required environment variables are set
-  if (!config.service || !config.index || !config.queryKey || 
-    !config.semanticConfiguration || !config.dnsSuffix) {
-    console.error(`❌ Missing required Azure Search configuration for ${envPrefix}. Check your .env.local file.`);
-  }
-
-  return config;
-};
-
-// Default configurations
-const AZURE_CONFIG_REG = createAzureConfig('REG');
-const AZURE_CONFIG_CASES = createAzureConfig('CASES');
+const MODE_MAP = { REG: 'regulations', CASES: 'cases' };
 
 const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
 const CACHE_KEY_PREFIX_REG = "search_cache_reg_";
@@ -105,90 +85,71 @@ const clearExpiredCache = () => {
   }
 };
 
-// Parse API response into standardized format
+// Parse backend /search response into standardized format
 const parseSearchResults = (data) => {
-  if (!data || !data.value) {
+  if (!data || !data.results) {
     return [];
   }
 
-  return data.value.map((item) => {
+  return data.results.map(({ score, captions, document }) => {
+    // Extract highlights from captions — prefer highlighted version, fall back to plain text
+    const caption = Array.isArray(captions) && captions.length > 0 ? captions[0] : null;
+    const highlights = caption?.highlights || caption?.text || "";
 
     return {
-      title: item.header_1 || item.header_2 || item.title || "Result",
-      description: item.chunk || "",
-      subtitle: item.header_2 || "",
-      subtitle2: item.header_3 || "",
-      source: item.title || "",
-      highlights: item["@search.captions"][0].highlights || item["@search.captions"][0].text || "",
-      score: item["@search.score"],
-      rerankerScore: item["@search.rerankerScore"],
+      title: document.header_1 || document.header_2 || document.title || "Result",
+      description: document.chunk || "",
+      subtitle: document.header_2 || "",
+      subtitle2: document.header_3 || "",
+      source: document.title || "",
+      highlights,
+      score,
     };
   });
 };
 
 export const searchAzure = async (query, configType = 'REG') => {
   try {
-    // Select configuration based on type
-    const AZURE_CONFIG = configType === 'CASES' ? AZURE_CONFIG_CASES : AZURE_CONFIG_REG;
-    
     // Check cache first
     const cachedResults = getCachedResults(query, configType);
     if (cachedResults) {
       return cachedResults;
     }
 
-    const searchUrl = `https://${AZURE_CONFIG.service}.${AZURE_CONFIG.dnsSuffix}/indexes/${AZURE_CONFIG.index}/docs/search?api-version=${AZURE_CONFIG.apiVersion}`;
+    const mode = MODE_MAP[configType] || 'regulations';
+    console.log("🔍 Search Query:", query, "| mode:", mode);
 
-    console.log("🔍 Search Query:", query);
-
-    const response = await fetch(searchUrl, {
-      method: "POST",
+    const response = await fetch(`${BACKEND_URL}/search`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "api-key": AZURE_CONFIG.queryKey,
+        'Content-Type': 'application/json',
+        ...(process.env.REACT_APP_BACKEND_API_KEY && {
+          'X-API-Key': process.env.REACT_APP_BACKEND_API_KEY,
+        }),
       },
-      body: JSON.stringify({
-        search: query,
-        count: true,
-        vectorQueries: [
-          {
-            kind: "text",
-            text: query,
-            fields: "text_vector",
-            k: 50
-          }
-        ],
-        queryType: "semantic",
-        semanticConfiguration: AZURE_CONFIG.semanticConfiguration,
-        captions: "extractive",
-        answers: "extractive",
-        queryLanguage: "ar-SA",
-        searchFields: "header_1,chunk",
-        select: "chunk_id,parent_id,chunk,title,header_1,header_2,header_3",
-        highlightPreTag: PRE_TAG,
-        highlightPostTag: POST_TAG,
-      }),
+      body: JSON.stringify({ query, mode }),
     });
 
     if (!response.ok) {
       console.error("❌ API Error:", response.statusText, response.status);
-      throw new Error(`Azure Search API error: ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `Search API error: ${response.statusText}`);
     }
 
     const data = await response.json();
     console.log("✅ Search Response received");
-    console.log("📊 Total Results Count:", data["@odata.count"] || 0);
-    console.log("📋 Documents in response:", data.value?.length || 0);
-    
+    console.log("📊 Total Results Count:", data.count ?? 0);
+    console.log("📋 Documents in response:", data.results?.length || 0);
+
     // Parse and normalize results
     const results = parseSearchResults(data);
-    
+
     // Cache the results
     setCachedResults(query, results, configType);
-    
+
     return results;
   } catch (error) {
-    console.error("❌ Error searching Azure:", error);
+    console.error("❌ Error searching:", error);
     throw error;
   }
 };

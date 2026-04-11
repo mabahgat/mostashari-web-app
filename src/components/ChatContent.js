@@ -29,16 +29,8 @@ export const ChatContent = ({ t, language }) => {
     setMessages(prev => [...prev, { type: 'user', text: userMessage }]);
 
     try {
-      // Build conversation history for backend (excluding error messages)
-      const conversationHistory = messages
-        .filter(msg => msg.type !== 'error')
-        .map(msg => ({
-          role: msg.type === 'user' ? 'user' : 'assistant',
-          content: msg.text,
-        }));
-
-      // Send message with conversation history
-      const result = await sendChatMessage(userMessage, conversationHistory);
+      // Send message — the backend manages conversation history per session
+      const result = await sendChatMessage(userMessage);
       
       // Extract response from the returned object
       const assistantResponse = result.response;
