@@ -137,6 +137,12 @@ export const ChatContent = ({ t, language }) => {
               e.target.style.borderColor = '#FFD700';
               e.target.style.boxShadow = '0 4px 20px rgba(255, 215, 0, 0.2)';
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                handleSendMessage(e);
+              }
+            }}
             onBlur={(e) => {
               e.target.style.borderColor = '#e0e0e0';
               e.target.style.boxShadow = 'none';
@@ -406,7 +412,7 @@ export const ChatContent = ({ t, language }) => {
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
               handleSendMessage(e);
