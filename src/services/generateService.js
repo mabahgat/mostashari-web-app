@@ -83,15 +83,15 @@ export const generateContent = async (userInput) => {
 
     console.log("🔍 Generating content for prompt:", userInput.substring(0, 50) + "...");
 
-    const response = await fetch(`${BACKEND_URL}/api/generate`, {
+    const response = await fetch(`${BACKEND_URL}/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.REACT_APP_BACKEND_API_KEY,
+        ...(process.env.REACT_APP_BACKEND_API_KEY && {
+          'X-API-Key': process.env.REACT_APP_BACKEND_API_KEY,
+        }),
       },
-      body: JSON.stringify({
-        input: userInput,
-      }),
+      body: JSON.stringify({ userInput }),
     });
 
     if (!response.ok) {
@@ -102,11 +102,11 @@ export const generateContent = async (userInput) => {
 
     console.log("✅ Generate Response received");
     const data = await response.json();
-    
-    // Extract text from nested response structure: output -> message -> content -> output_text -> text
-    const messageOutput = data.output?.find(item => item.type === 'message');
-    const textContent = messageOutput?.content?.find(item => item.type === 'output_text');
-    const result = textContent?.text || '';
+    const result = data.reply || '';
+
+    if (data.usage) {
+      console.log(`📊 Usage — input: ${data.usage.inputTokens}, output: ${data.usage.outputTokens}, total: ${data.usage.totalTokens} tokens (model: ${data.model})`);
+    }
     
     setCachedResult(userInput, result);
     
