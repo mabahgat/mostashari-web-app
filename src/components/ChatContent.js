@@ -204,176 +204,44 @@ export const ChatContent = ({ t, language }) => {
 
   // Chat view - after first message
   return (
-    <div className="content" style={{ 
+    <div className="content chat-active" style={{ 
       justifyContent: 'flex-start', 
       gap: '16px',
       flexDirection: 'column',
-      padding: '20px 0',
-      paddingBottom: '20px'
     }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-        flexShrink: 0,
-      }}>
-        <h1 className="title" style={{ margin: 0 }}>{t.chat || 'Chat'}</h1>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button
-            type="button"
-            onClick={handleDownloadConversation}
-            disabled={messages.length === 0}
-            style={{
-              padding: '8px 12px',
-              fontSize: '12px',
-              fontWeight: '600',
-              backgroundColor: messages.length === 0 ? '#e0e0e0' : '#f0f0f0',
-              color: '#666',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: messages.length === 0 ? 'not-allowed' : 'pointer',
-              transition: 'background-color 0.2s ease',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-              opacity: messages.length === 0 ? 0.6 : 1,
-            }}
-            onMouseOver={(e) => {
-              if (messages.length > 0) {
-                e.target.style.backgroundColor = '#e0e0e0';
-              }
-            }}
-            onMouseOut={(e) => {
-              e.target.style.backgroundColor = messages.length === 0 ? '#e0e0e0' : '#f0f0f0';
-            }}
-            title={t.downloadConversation || 'Download Conversation'}
-          >
-            ⬇️ {t.downloadConversation || 'Download'}
-          </button>
-          <button
-            type="button"
-            onClick={handleClearChat}
-            style={{
-              padding: '8px 16px',
-              fontSize: '12px',
-              fontWeight: '600',
-              backgroundColor: '#f0f0f0',
-              color: '#666',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s ease',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-            }}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#e0e0e0'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#f0f0f0'}
-          >
-            + {t.newConversation || 'New Conversation'}
-          </button>
-        </div>
-      </div>
+      <h1 className="title">{t.appTitle}</h1>
 
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-        flex: 1,
-        maxHeight: 'calc(100vh - 450px)',
-        minHeight: '300px',
-        overflowY: 'auto',
-        padding: '16px',
-        backgroundColor: '#f9f9f9',
-        borderRadius: '12px',
-        border: '1px solid #e0e0e0',
-        width: '100%',
-      }}>
+      <div className="chat-messages">
         {messages.map((msg, idx) => (
           <div
             key={idx}
+            className="chat-message-row"
             style={{
-              display: 'flex',
               justifyContent: msg.type === 'user' ? (language === 'ar' ? 'flex-start' : 'flex-end') : (language === 'ar' ? 'flex-end' : 'flex-start'),
-              marginBottom: '8px',
-              position: 'relative',
-              alignItems: 'flex-start',
-              gap: '8px',
             }}
           >
             <div
+              className="chat-bubble"
               style={{
-                maxWidth: '70%',
-                padding: '12px 16px',
-                borderRadius: '12px',
                 backgroundColor: msg.type === 'user' ? '#007bff' : msg.type === 'error' ? '#f8d7da' : '#e9ecef',
                 color: msg.type === 'user' ? '#fff' : msg.type === 'error' ? '#721c24' : '#000',
-                wordWrap: 'break-word',
-                whiteSpace: 'pre-wrap',
               }}
             >
               {msg.text}
             </div>
             {msg.type === 'bot' && (
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '6px',
-                  flexDirection: 'column',
-                  flexShrink: 0,
-                  marginTop: '2px',
-                }}
-              >
+              <div className="chat-msg-actions">
                 <button
                   onClick={() => handleCopyToClipboard(msg.text)}
-                  style={{
-                    padding: '6px 8px',
-                    fontSize: '12px',
-                    backgroundColor: '#f0f0f0',
-                    color: '#666',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    whiteSpace: 'nowrap',
-                    minWidth: '30px',
-                    textAlign: 'center',
-                  }}
+                  className="chat-msg-action-btn"
                   title={t.copyResponse || 'Copy response'}
-                  onMouseOver={(e) => {
-                    e.target.style.backgroundColor = '#e0e0e0';
-                    e.target.style.borderColor = '#ccc';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.backgroundColor = '#f0f0f0';
-                    e.target.style.borderColor = '#ddd';
-                  }}
                 >
                   📋
                 </button>
                 <button
                   onClick={() => handleDownloadAsText(msg.text, idx)}
-                  style={{
-                    padding: '6px 8px',
-                    fontSize: '12px',
-                    backgroundColor: '#f0f0f0',
-                    color: '#666',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    whiteSpace: 'nowrap',
-                    minWidth: '30px',
-                    textAlign: 'center',
-                  }}
+                  className="chat-msg-action-btn"
                   title={t.downloadResponse || 'Download response'}
-                  onMouseOver={(e) => {
-                    e.target.style.backgroundColor = '#e0e0e0';
-                    e.target.style.borderColor = '#ccc';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.backgroundColor = '#f0f0f0';
-                    e.target.style.borderColor = '#ddd';
-                  }}
                 >
                   ⬇️
                 </button>
@@ -382,17 +250,10 @@ export const ChatContent = ({ t, language }) => {
           </div>
         ))}
         {loading && (
-          <div style={{
-            display: 'flex',
+          <div className="chat-message-row" style={{
             justifyContent: language === 'ar' ? 'flex-end' : 'flex-start',
-            marginBottom: '8px',
           }}>
-            <div style={{
-              padding: '12px 16px',
-              borderRadius: '12px',
-              backgroundColor: '#e9ecef',
-              color: '#999',
-            }}>
+            <div className="chat-bubble" style={{ backgroundColor: '#e9ecef', color: '#999' }}>
               {t.typing || 'Typing...'}
             </div>
           </div>
@@ -400,15 +261,15 @@ export const ChatContent = ({ t, language }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <form 
-        onSubmit={handleSendMessage} 
-        style={{
-          display: 'flex',
-          gap: '12px',
-          alignItems: 'flex-end',
-          width: '100%',
-        }}
-      >
+      <form onSubmit={handleSendMessage} className="chat-input-bar">
+        <button
+          type="button"
+          onClick={handleClearChat}
+          className="chat-action-btn"
+          title={t.newConversation || 'New Conversation'}
+        >
+          +
+        </button>
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -420,36 +281,22 @@ export const ChatContent = ({ t, language }) => {
           }}
           placeholder={t.chatPlaceholder || 'Type your message...'}
           disabled={loading}
-          style={{
-            flex: 1,
-            minHeight: '44px',
-            maxHeight: '120px',
-            padding: '12px 16px',
-            border: '2px solid #e0e0e0',
-            borderRadius: '12px',
-            fontFamily: 'inherit',
-            fontSize: '14px',
-            resize: 'vertical',
-            fontWeight: '400',
-            boxSizing: 'border-box',
-          }}
+          className="chat-input"
         />
+        <button
+          type="button"
+          onClick={handleDownloadConversation}
+          disabled={messages.length === 0}
+          className="chat-action-btn"
+          title={t.downloadConversation || 'Download Conversation'}
+          style={{ opacity: messages.length === 0 ? 0.4 : 1 }}
+        >
+          ⬇️
+        </button>
         <button 
           type="submit" 
           disabled={loading || !input.trim()}
-          style={{
-            padding: '12px 24px',
-            backgroundColor: loading || !input.trim() ? '#ccc' : '#000',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
-            fontWeight: '600',
-            fontSize: '13px',
-            transition: 'background-color 0.2s ease',
-            minWidth: '80px',
-            whiteSpace: 'nowrap',
-          }}
+          className="chat-send-btn"
         >
           {loading ? '⏳' : t.send || 'Send'}
         </button>
