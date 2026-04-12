@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { sendChatMessage, clearCurrentSession } from '../services/chatService';
 
 export const ChatContent = ({ t, language }) => {
@@ -6,6 +6,7 @@ export const ChatContent = ({ t, language }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -15,6 +16,24 @@ export const ChatContent = ({ t, language }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const closeContextMenu = useCallback(() => setContextMenu(null), []);
+
+  useEffect(() => {
+    if (contextMenu) {
+      document.addEventListener('click', closeContextMenu);
+      document.addEventListener('scroll', closeContextMenu, true);
+      return () => {
+        document.removeEventListener('click', closeContextMenu);
+        document.removeEventListener('scroll', closeContextMenu, true);
+      };
+    }
+  }, [contextMenu, closeContextMenu]);
+
+  const handleContextMenu = (e, text, idx) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, text, idx });
+  };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -220,32 +239,48 @@ export const ChatContent = ({ t, language }) => {
               justifyContent: msg.type === 'user' ? (language === 'ar' ? 'flex-start' : 'flex-end') : (language === 'ar' ? 'flex-end' : 'flex-start'),
             }}
           >
-            <div
-              dir="auto"
-              className="chat-bubble"
-              style={{
-                backgroundColor: msg.type === 'user' ? '#007bff' : msg.type === 'error' ? '#f8d7da' : '#e9ecef',
-                color: msg.type === 'user' ? '#fff' : msg.type === 'error' ? '#721c24' : '#000',
-              }}
-            >
-              {msg.text}
-            </div>
-            {msg.type === 'bot' && (
-              <div className="chat-msg-actions">
-                <button
-                  onClick={() => handleCopyToClipboard(msg.text)}
-                  className="chat-msg-action-btn"
-                  title={t.copyResponse || 'Copy response'}
+            {msg.type === 'bot' ? (
+              <div
+                className="chat-bubble-wrapper"
+                onContextMenu={(e) => handleContextMenu(e, msg.text, idx)}
+              >
+                <div className="chat-msg-actions">
+                  <button
+                    onClick={() => handleCopyToClipboard(msg.text)}
+                    className="chat-msg-action-btn"
+                    title={t.copyResponse || 'Copy response'}
+                  >
+                    📋
+                  </button>
+                  <button
+                    onClick={() => handleDownloadAsText(msg.text, idx)}
+                    className="chat-msg-action-btn"
+                    title={t.downloadResponse || 'Download response'}
+                  >
+                    ⬇️
+                  </button>
+                </div>
+                <div
+                  dir="auto"
+                  className="chat-bubble"
+                  style={{
+                    backgroundColor: '#e9ecef',
+                    color: '#000',
+                  }}
                 >
-                  📋
-                </button>
-                <button
-                  onClick={() => handleDownloadAsText(msg.text, idx)}
-                  className="chat-msg-action-btn"
-                  title={t.downloadResponse || 'Download response'}
-                >
-                  ⬇️
-                </button>
+                  {msg.text}
+                </div>
+              </div>
+            ) : (
+              <div
+                dir="auto"
+                className="chat-bubble"
+                style={{
+                  backgroundColor: msg.type === 'user' ? '#007bff' : '#f8d7da',
+                  color: msg.type === 'user' ? '#fff' : '#721c24',
+                }}
+              >
+                {msg.text}
               </div>
             )}
           </div>
@@ -261,6 +296,23 @@ export const ChatContent = ({ t, language }) => {
         )}
         <div ref={messagesEndRef} />
       </div>
+
+      {contextMenu && (
+        <div className="chat-context-menu" style={{ top: contextMenu.y, left: contextMenu.x }}>
+          <button
+            className="chat-context-menu-item"
+            onClick={() => { handleCopyToClipboard(contextMenu.text); setContextMenu(null); }}
+          >
+            📋 {t.copyResponse || 'Copy'}
+          </button>
+          <button
+            className="chat-context-menu-item"
+            onClick={() => { handleDownloadAsText(contextMenu.text, contextMenu.idx); setContextMenu(null); }}
+          >
+            ⬇️ {t.downloadResponse || 'Download'}
+          </button>
+        </div>
+      )}
 
       <form onSubmit={handleSendMessage} className="chat-input-bar">
         <button
@@ -283,8 +335,16 @@ export const ChatContent = ({ t, language }) => {
           }}
           placeholder={t.chatPlaceholder || 'Type your message...'}
           disabled={loading}
-          className="chat-input"
+          className={`chat-input${language === 'ar' ? ' chat-input-rtl' : ''}`}
         />
+        <button 
+          type="submit" 
+          disabled={loading || !input.trim()}
+          className={`chat-send-btn${language === 'ar' ? ' chat-send-btn-rtl' : ''}`}
+          title={t.send || 'Send'}
+        >
+          {loading ? '⏳' : '➤'}
+        </button>
         <button
           type="button"
           onClick={handleDownloadConversation}
@@ -294,13 +354,6 @@ export const ChatContent = ({ t, language }) => {
           style={{ opacity: messages.length === 0 ? 0.4 : 1 }}
         >
           ⬇️
-        </button>
-        <button 
-          type="submit" 
-          disabled={loading || !input.trim()}
-          className="chat-send-btn"
-        >
-          {loading ? '⏳' : t.send || 'Send'}
         </button>
       </form>
 
