@@ -221,6 +221,7 @@ export const ChatContent = ({ t, language }) => {
             }}
           >
             <div
+              dir="auto"
               className="chat-bubble"
               style={{
                 backgroundColor: msg.type === 'user' ? '#007bff' : msg.type === 'error' ? '#f8d7da' : '#e9ecef',
@@ -253,7 +254,7 @@ export const ChatContent = ({ t, language }) => {
           <div className="chat-message-row" style={{
             justifyContent: language === 'ar' ? 'flex-end' : 'flex-start',
           }}>
-            <div className="chat-bubble" style={{ backgroundColor: '#e9ecef', color: '#999' }}>
+            <div dir="auto" className="chat-bubble" style={{ backgroundColor: '#e9ecef', color: '#999' }}>
               {t.typing || 'Typing...'}
             </div>
           </div>
@@ -271,6 +272,7 @@ export const ChatContent = ({ t, language }) => {
           +
         </button>
         <textarea
+          dir="auto"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {

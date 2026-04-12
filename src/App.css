@@ -410,6 +410,7 @@
   border-radius: 12px;
   word-wrap: break-word;
   white-space: pre-wrap;
+  text-align: start;
 }
 
 .chat-msg-actions {
