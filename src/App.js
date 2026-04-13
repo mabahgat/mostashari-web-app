@@ -49,10 +49,14 @@ function App() {
     display: 'flex',
     gap: '0',
     justifyContent: language === 'ar' ? 'flex-end' : 'flex-start',
-    marginBottom: '20px',
     flexWrap: 'wrap',
-    padding: '0',
     borderBottom: '1px solid #e0e0e0',
+    position: 'sticky',
+    top: '0',
+    zIndex: 100,
+    backgroundColor: '#ffffff',
+    margin: '0 -20px',
+    padding: '0 20px',
   });
 
   const getTabButtonStyle = (isActive, position) => ({
