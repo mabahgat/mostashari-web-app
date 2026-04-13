@@ -1,7 +1,7 @@
 const CACHE_DURATION = 24 * 60 * 60 * 1000;
 const CACHE_KEY_PREFIX = "generate_cache_";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 // Normalize whitespace to avoid cache misses due to extra spaces, line breaks, tabs, etc.
 const normalizeWhitespace = (text) => {
@@ -87,8 +87,8 @@ export const generateContent = async (userInput) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(process.env.REACT_APP_BACKEND_API_KEY && {
-          'X-API-Key': process.env.REACT_APP_BACKEND_API_KEY,
+        ...(import.meta.env.VITE_BACKEND_API_KEY && {
+          'X-API-Key': import.meta.env.VITE_BACKEND_API_KEY,
         }),
       },
       body: JSON.stringify({ userInput }),

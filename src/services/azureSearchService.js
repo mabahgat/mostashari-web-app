@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 const MODE_MAP = { REG: 'regulations', CASES: 'cases' };
 
@@ -123,8 +123,8 @@ export const searchAzure = async (query, configType = 'REG') => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(process.env.REACT_APP_BACKEND_API_KEY && {
-          'X-API-Key': process.env.REACT_APP_BACKEND_API_KEY,
+        ...(import.meta.env.VITE_BACKEND_API_KEY && {
+          'X-API-Key': import.meta.env.VITE_BACKEND_API_KEY,
         }),
       },
       body: JSON.stringify({ query, mode }),

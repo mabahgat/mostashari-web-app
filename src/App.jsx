@@ -11,9 +11,9 @@ function App() {
   const [activeTab, setActiveTab] = useState('regulations'); // 'regulations', 'cases', 'generate', or 'chat'
   const t = translations[language];
 
-  const appVersion = process.env.REACT_APP_VERSION || 'dev';
-  const commitHash = process.env.REACT_APP_COMMIT_HASH || 'unknown';
-  const branchName = process.env.REACT_APP_BRANCH_NAME || 'unknown';
+  const appVersion = import.meta.env.VITE_VERSION || 'dev';
+  const commitHash = import.meta.env.VITE_COMMIT_HASH || 'unknown';
+  const branchName = import.meta.env.VITE_BRANCH_NAME || 'unknown';
 
   const {
     input: regulationsInput,
@@ -49,10 +49,14 @@ function App() {
     display: 'flex',
     gap: '0',
     justifyContent: language === 'ar' ? 'flex-end' : 'flex-start',
-    marginBottom: '20px',
     flexWrap: 'wrap',
-    padding: '0',
     borderBottom: '1px solid #e0e0e0',
+    position: 'sticky',
+    top: '0',
+    zIndex: 100,
+    backgroundColor: '#ffffff',
+    margin: '0 -20px',
+    padding: '0 20px',
   });
 
   const getTabButtonStyle = (isActive, position) => ({
