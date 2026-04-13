@@ -16,6 +16,6 @@
     "start": "vite",
     "build": "npm run set-version && vite build",
     "preview": "vite preview",
-    "set-version": "node scripts/setVersion.js"
+    "set-version": "node scripts/setVersion.cjs"
   }
 }
