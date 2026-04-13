@@ -381,7 +381,7 @@
 .content.chat-active {
   padding: 60px 40px;
   min-height: 600px;
-  max-height: calc(100vh - 180px);
+  max-height: calc(100vh - 230px);
   display: flex;
   flex-direction: column;
 }
@@ -644,7 +644,7 @@
   /* Chat responsive - tablet */
   .content.chat-active {
     padding: 40px 24px;
-    max-height: calc(100vh - 140px);
+    max-height: calc(100vh - 200px);
   }
 
   .chat-bubble {
@@ -782,7 +782,7 @@
   .content.chat-active {
     padding: 16px 12px;
     min-height: calc(100vh - 164px);
-    max-height: calc(100vh - 104px);
+    max-height: calc(100vh - 150px);
     justify-content: flex-start;
     gap: 12px;
     display: flex;
