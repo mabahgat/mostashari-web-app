@@ -1,10 +1,10 @@
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 const SESSION_STORAGE_KEY = 'chat_session_id';
 
 const authHeaders = () => ({
   'Content-Type': 'application/json',
-  ...(process.env.REACT_APP_BACKEND_API_KEY && {
-    'X-API-Key': process.env.REACT_APP_BACKEND_API_KEY,
+  ...(import.meta.env.VITE_BACKEND_API_KEY && {
+    'X-API-Key': import.meta.env.VITE_BACKEND_API_KEY,
   }),
 });
 

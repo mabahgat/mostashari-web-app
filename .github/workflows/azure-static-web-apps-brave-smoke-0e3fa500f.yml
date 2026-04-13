@@ -45,18 +45,18 @@ jobs:
           ###### End of Repository/Build Configurations ######
         env:
           # Cases Search Service
-          REACT_APP_CASES_SEARCH_SERVICE: ${{ vars.REACT_APP_CASES_SEARCH_SERVICE }}
-          REACT_APP_CASES_SEARCH_INDEX: ${{ vars.REACT_APP_CASES_SEARCH_INDEX }}
-          REACT_APP_CASES_SEARCH_KEY: ${{ secrets.REACT_APP_CASES_SEARCH_KEY }}
-          REACT_APP_CASES_SEMANTIC_CONFIG: ${{ vars.REACT_APP_CASES_SEMANTIC_CONFIG }}
+          VITE_CASES_SEARCH_SERVICE: ${{ vars.VITE_CASES_SEARCH_SERVICE }}
+          VITE_CASES_SEARCH_INDEX: ${{ vars.VITE_CASES_SEARCH_INDEX }}
+          VITE_CASES_SEARCH_KEY: ${{ secrets.VITE_CASES_SEARCH_KEY }}
+          VITE_CASES_SEMANTIC_CONFIG: ${{ vars.VITE_CASES_SEMANTIC_CONFIG }}
           # Regulations Search Service
-          REACT_APP_REG_SEARCH_SERVICE: ${{ vars.REACT_APP_REG_SEARCH_SERVICE }}
-          REACT_APP_REG_SEARCH_INDEX: ${{ vars.REACT_APP_REG_SEARCH_INDEX }}
-          REACT_APP_REG_SEARCH_KEY: ${{ secrets.REACT_APP_REG_SEARCH_KEY }}
-          REACT_APP_REG_SEMANTIC_CONFIG: ${{ vars.REACT_APP_REG_SEMANTIC_CONFIG }}
+          VITE_REG_SEARCH_SERVICE: ${{ vars.VITE_REG_SEARCH_SERVICE }}
+          VITE_REG_SEARCH_INDEX: ${{ vars.VITE_REG_SEARCH_INDEX }}
+          VITE_REG_SEARCH_KEY: ${{ secrets.VITE_REG_SEARCH_KEY }}
+          VITE_REG_SEMANTIC_CONFIG: ${{ vars.VITE_REG_SEMANTIC_CONFIG }}
           # App Backend for Generative AI
-          REACT_APP_BACKEND_URL: ${{ vars.REACT_APP_BACKEND_URL }}
-          REACT_APP_BACKEND_API_KEY: ${{ secrets.REACT_APP_BACKEND_API_KEY }}
+          VITE_BACKEND_URL: ${{ vars.VITE_BACKEND_URL }}
+          VITE_BACKEND_API_KEY: ${{ secrets.VITE_BACKEND_API_KEY }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

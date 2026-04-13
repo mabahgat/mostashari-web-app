@@ -11,9 +11,9 @@ function App() {
   const [activeTab, setActiveTab] = useState('regulations'); // 'regulations', 'cases', 'generate', or 'chat'
   const t = translations[language];
 
-  const appVersion = process.env.REACT_APP_VERSION || 'dev';
-  const commitHash = process.env.REACT_APP_COMMIT_HASH || 'unknown';
-  const branchName = process.env.REACT_APP_BRANCH_NAME || 'unknown';
+  const appVersion = import.meta.env.VITE_VERSION || 'dev';
+  const commitHash = import.meta.env.VITE_COMMIT_HASH || 'unknown';
+  const branchName = import.meta.env.VITE_BRANCH_NAME || 'unknown';
 
   const {
     input: regulationsInput,

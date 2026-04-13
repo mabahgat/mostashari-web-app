@@ -41,12 +41,12 @@ if (fs.existsSync(envPath)) {
   // Remove old version lines
   envContent = envContent
     .split('\n')
-    .filter(line => !line.startsWith('REACT_APP_VERSION=') && !line.startsWith('REACT_APP_COMMIT_HASH='))
+    .filter(line => !line.startsWith('VITE_VERSION=') && !line.startsWith('VITE_COMMIT_HASH=') && !line.startsWith('VITE_BRANCH_NAME='))
     .join('\n');
 }
 
 // Add new version lines
-envContent += `\nREACT_APP_VERSION=${version}\nREACT_APP_COMMIT_HASH=${commitHash}\n`;
+envContent += `\nVITE_VERSION=${version}\nVITE_COMMIT_HASH=${commitHash}\nVITE_BRANCH_NAME=${branchName}\n`;
 
 // Write back to .env.local
 fs.writeFileSync(envPath, envContent);
