@@ -5,6 +5,7 @@ import { useSearch } from './hooks/useSearch';
 import { SearchContent } from './components/SearchContent';
 import { GenerateCase } from './components/GenerateCase';
 import { ChatContent } from './components/ChatContent';
+import { getModelInfo } from './services/modelService';
 
 function App() {
   const [language, setLanguage] = useState('ar');
@@ -14,6 +15,14 @@ function App() {
   const appVersion = import.meta.env.VITE_VERSION || 'dev';
   const commitHash = import.meta.env.VITE_COMMIT_HASH || 'unknown';
   const branchName = import.meta.env.VITE_BRANCH_NAME || 'unknown';
+
+  const [modelInfo, setModelInfo] = useState(null);
+
+  useEffect(() => {
+    getModelInfo()
+      .then((info) => setModelInfo(info))
+      .catch(() => {});
+  }, []);
 
   const {
     input: regulationsInput,
@@ -206,6 +215,7 @@ function App() {
       {/* Version footer */}
       <footer className="footer">
         v{appVersion} • {commitHash.substring(0, 7)} • {branchName}
+        {modelInfo && ` • ${modelInfo.name} v${modelInfo.version}`}
       </footer>
     </div>
   );
