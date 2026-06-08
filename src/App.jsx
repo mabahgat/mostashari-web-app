@@ -67,13 +67,15 @@ function App() {
     justifyContent: 'flex-start',
     direction: isRtl ? 'rtl' : 'ltr',
     flexWrap: 'wrap',
-    borderBottom: '1px solid #e0e0e0',
+    borderBottom: 'none',
     position: 'sticky',
     top: '0',
     zIndex: 100,
     backgroundColor: '#ffffff',
-    margin: '0 -20px',
-    padding: '0 20px',
+    width: '100%',
+    margin: '0',
+    padding: '0',
+    boxSizing: 'border-box',
   });
 
   const getTabButtonStyle = (isActive, position) => ({
