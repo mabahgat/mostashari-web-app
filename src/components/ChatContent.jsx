@@ -100,11 +100,11 @@ export const ChatContent = ({ t, language }) => {
 
   const handleDownloadConversation = () => {
     try {
-      let conversationText = `${t.chat || 'Chat'} - ${new Date().toLocaleString()}\n`;
+      let conversationText = `${t.consult || 'Consult'} - ${new Date().toLocaleString()}\n`;
       conversationText += '='.repeat(50) + '\n\n';
 
       messages.forEach((msg, idx) => {
-        const role = msg.type === 'user' ? (t.send || 'User') : (t.chat || 'Assistant');
+        const role = msg.type === 'user' ? (t.user || 'User') : (t.assistant || 'Assistant');
         conversationText += `${idx + 1}. ${role}:\n`;
         conversationText += msg.text + '\n\n';
       });
@@ -126,7 +126,6 @@ export const ChatContent = ({ t, language }) => {
   const hasMessages = messages.length > 0;
 
   if (!hasMessages) {
-    // Initial view - same as Generate
     return (
       <div className="content" style={{ justifyContent: 'center', gap: '30px' }}>
         <h1 className="title">{t.appTitle}</h1>
@@ -266,6 +265,7 @@ export const ChatContent = ({ t, language }) => {
                   style={{
                     backgroundColor: '#e9ecef',
                     color: '#000',
+                    textAlign: language === 'ar' ? 'right' : 'left',
                   }}
                 >
                   {msg.text}
@@ -278,6 +278,7 @@ export const ChatContent = ({ t, language }) => {
                 style={{
                   backgroundColor: msg.type === 'user' ? '#007bff' : '#f8d7da',
                   color: msg.type === 'user' ? '#fff' : '#721c24',
+                  textAlign: language === 'ar' ? 'right' : 'left',
                 }}
               >
                 {msg.text}
@@ -289,7 +290,15 @@ export const ChatContent = ({ t, language }) => {
           <div className="chat-message-row" style={{
             justifyContent: language === 'ar' ? 'flex-end' : 'flex-start',
           }}>
-            <div dir="auto" className="chat-bubble" style={{ backgroundColor: '#e9ecef', color: '#999' }}>
+            <div
+              dir="auto"
+              className="chat-bubble"
+              style={{
+                backgroundColor: '#e9ecef',
+                color: '#999',
+                textAlign: language === 'ar' ? 'right' : 'left',
+              }}
+            >
               {t.typing || 'Typing...'}
             </div>
           </div>

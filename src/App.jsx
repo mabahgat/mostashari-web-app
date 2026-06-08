@@ -3,14 +3,21 @@ import './App.css';
 import translations from './i18n';
 import { useSearch } from './hooks/useSearch';
 import { SearchContent } from './components/SearchContent';
-import { GenerateCase } from './components/GenerateCase';
 import { ChatContent } from './components/ChatContent';
 import { getModelInfo } from './services/modelService';
 
+const RTL_LANG_PREFIXES = ['ar', 'fa', 'he', 'ur', 'ps', 'dv', 'ku', 'yi'];
+
+const isRtlLanguage = (lang) => {
+  if (!lang) return false;
+  return RTL_LANG_PREFIXES.some((prefix) => lang.toLowerCase().startsWith(prefix));
+};
+
 function App() {
   const [language, setLanguage] = useState('ar');
-  const [activeTab, setActiveTab] = useState('regulations'); // 'regulations', 'cases', 'generate', or 'chat'
+  const [activeTab, setActiveTab] = useState('chat'); // 'chat', 'regulations', or 'cases'
   const t = translations[language];
+  const isRtl = isRtlLanguage(language);
 
   const appVersion = import.meta.env.VITE_VERSION || 'dev';
   const commitHash = import.meta.env.VITE_COMMIT_HASH || 'unknown';
@@ -57,7 +64,8 @@ function App() {
   const getTabContainerStyle = () => ({
     display: 'flex',
     gap: '0',
-    justifyContent: language === 'ar' ? 'flex-end' : 'flex-start',
+    justifyContent: 'flex-start',
+    direction: isRtl ? 'rtl' : 'ltr',
     flexWrap: 'wrap',
     borderBottom: '1px solid #e0e0e0',
     position: 'sticky',
@@ -84,7 +92,7 @@ function App() {
   });
 
   return (
-    <div className="App" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="App" dir={isRtl ? 'rtl' : 'ltr'}>
       <button className="language-toggle" onClick={toggleLanguage}>
         {language === 'ar' ? 'EN' : 'العربية'}
       </button>
@@ -93,7 +101,7 @@ function App() {
         <>
           {/* Search bar moved to top */}
           <div className="top-search-container">
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '12px' }}>
+            <div className="search-form-top" style={{ gap: '12px', padding: '12px' }}>
               <input
                 type="text"
                 value={activeTab === 'regulations' ? regulationsInput : casesInput}
@@ -139,28 +147,22 @@ function App() {
           <div className="container">
             <div style={getTabContainerStyle()}>
               <button
+                onClick={() => setActiveTab('chat')}
+                style={getTabButtonStyle(activeTab === 'chat', isRtl ? 'left' : 'right')}
+              >
+                {t.consult || 'Consult'}
+              </button>
+              <button
                 onClick={() => setActiveTab('regulations')}
-                style={getTabButtonStyle(activeTab === 'regulations', language === 'ar' ? 'right' : 'left')}
+                style={getTabButtonStyle(activeTab === 'regulations', isRtl ? 'right' : 'left')}
               >
                 {t.regulationsSearch || 'Regulations Search'}
               </button>
               <button
                 onClick={() => setActiveTab('cases')}
-                style={getTabButtonStyle(activeTab === 'cases', language === 'ar' ? 'center' : 'center')}
+                style={getTabButtonStyle(activeTab === 'cases', 'center')}
               >
                 {t.casesSearch || 'Cases Search'}
-              </button>
-              <button
-                onClick={() => setActiveTab('generate')}
-                style={getTabButtonStyle(activeTab === 'generate', language === 'ar' ? 'left' : 'right')}
-              >
-                {t.generate || 'Generate'}
-              </button>
-              <button
-                onClick={() => setActiveTab('chat')}
-                style={getTabButtonStyle(activeTab === 'chat', language === 'ar' ? 'left' : 'right')}
-              >
-                {t.chat || 'Chat'}
               </button>
             </div>
 
@@ -202,9 +204,6 @@ function App() {
                   </button>
                 </form>
               </div>
-            </div>
-            <div style={{ display: activeTab === 'generate' ? 'block' : 'none' }}>
-              <GenerateCase t={t} language={language} />
             </div>
             <div style={{ display: activeTab === 'chat' ? 'block' : 'none' }}>
               <ChatContent t={t} language={language} />
