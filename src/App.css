@@ -302,6 +302,15 @@
   padding: 0 20px;
 }
 
+@media (min-width: 481px) {
+  .container,
+  .content,
+  .results-wrapper,
+  .search-form-top {
+    max-width: 90vw;
+  }
+}
+
 .loading {
   text-align: center;
   padding: 60px 20px;
