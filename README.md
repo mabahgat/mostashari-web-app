@@ -1,70 +1,113 @@
-# Getting Started with Create React App
+# Mostashari Web App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Frontend for legal search and consultation workflows.
 
-## Available Scripts
+## What this app does
 
-In the project directory, you can run:
+- Provides three user-facing tabs:
+	- Consult (default tab)
+	- Regulations Search
+	- Cases Search
+- Supports Arabic and English UI switching.
+- Handles RTL and LTR layout behavior for tab/header placement.
+- Sends search and chat requests to a backend API.
+- Stores and reuses chat session IDs in local storage.
 
-### `npm start`
+## Tech stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- React 19
+- Vite 6
+- Vitest + Testing Library
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Prerequisites
 
-### `npm test`
+- Node.js 18+ (recommended)
+- npm
+- Running backend API
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Environment variables
 
-### `npm run build`
+Create a local env file named .env.local in the project root.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Use Vite-prefixed keys for frontend runtime access:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```env
+VITE_BACKEND_URL=http://localhost:8001
+VITE_BACKEND_API_KEY=replace-with-api-key
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Optional metadata shown in footer
+VITE_VERSION=0.1.0
+VITE_COMMIT_HASH=local
+VITE_BRANCH_NAME=local
 
-### `npm run eject`
+# Optional search config keys (if your backend requires them)
+VITE_REG_SEARCH_SERVICE=
+VITE_REG_SEARCH_KEY=
+VITE_REG_SEARCH_INDEX=
+VITE_REG_SEMANTIC_CONFIG=
+VITE_CASES_SEARCH_SERVICE=
+VITE_CASES_SEARCH_KEY=
+VITE_CASES_SEARCH_INDEX=
+VITE_CASES_SEMANTIC_CONFIG=
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Notes:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Only variables starting with VITE_ are exposed to browser code.
+- Restart the dev server after changing env values.
+- Do not commit real secrets.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Run locally
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Install dependencies:
 
-## Learn More
+```bash
+npm install
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Start the UI in development watch mode:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm start
+```
 
-### Code Splitting
+Default local URL:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- http://localhost:3000
 
-### Analyzing the Bundle Size
+## Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Run tests once:
 
-### Making a Progressive Web App
+```bash
+npm test
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Run tests in watch mode:
 
-### Advanced Configuration
+```bash
+npm run test:watch
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Build
 
-### Deployment
+Create production build output in build:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+npm run build
+```
 
-### `npm run build` fails to minify
+Preview production build locally:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm run preview
+```
+
+## Project structure
+
+- src/App.jsx: app shell, language toggle, tabs, and top-level layout
+- src/components/SearchContent.jsx: search results rendering
+- src/components/ChatContent.jsx: consult/chat experience
+- src/hooks/useSearch.js: search state and submit flow
+- src/services/azureSearchService.js: search API integration + cache
+- src/services/chatService.js: chat session and messaging API integration
