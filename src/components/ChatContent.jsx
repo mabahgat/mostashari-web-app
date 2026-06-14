@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { sendChatMessage, clearCurrentSession } from '../services/chatService';
+import { ParsedChatResponse } from './ParsedChatResponse';
 
 export const ChatContent = ({ t, language }) => {
   const [messages, setMessages] = useState([]);
@@ -268,7 +269,7 @@ export const ChatContent = ({ t, language }) => {
                     textAlign: language === 'ar' ? 'right' : 'left',
                   }}
                 >
-                  {msg.text}
+                  <ParsedChatResponse text={msg.text} />
                 </div>
               </div>
             ) : (
